@@ -27,7 +27,7 @@ name { color: white; text-shadow: 0 0 3px black; }
 <br><br>
 <button id=btn>Start / Stop</button>
 <br><br>
-<div id="jsontbl">.</div>
+<div onChange="myStartAnimate();" id="jsontbl">.</div>
 
 <script language="JavaScript">
 <!--
@@ -60,8 +60,8 @@ var chibis = null;
 getUserList(chibis);
 //=================================================================
 
-function myStartAnimate(twUsersList, chibis) {
-alert(twUsersList);
+function myStartAnimate() {
+	var twUsersList = document.getElementById("jsontbl").innerHTML;
 	twUsers = twUsersList.trim().split(",");
 	chibis = twUsersList.trim().split(",");
 	//chibis = new Array(twUsers.length); //num of characters
@@ -281,8 +281,7 @@ function getUserList(chibis) {
 
 	fetch(url)
 	  .then(response => response.text())
-	  //.then(data => document.getElementById("jsontbl").innerHTML = myItemList(data.substring(47).slice(0, -2))  
-	  .then(data => myStartAnimate(myItemList(data.substring(47).slice(0, -2)), chibis)
+	  .then(data => document.getElementById("jsontbl").innerHTML = myItemList(data.substring(47).slice(0, -2))  
 	  );
 }
   
