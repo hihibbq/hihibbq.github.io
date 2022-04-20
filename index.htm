@@ -273,7 +273,7 @@ var url = 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json&tq
 
 fetch(url)
   .then(response => response.text())
-  .then(data => document.getElementById("jsontbl").innerHTML = myItemTable(data.substring(47).slice(0, -2))  
+  .then(data => document.getElementById("jsontbl").innerHTML = myItemList(data.substring(47).slice(0, -2))  
   );
   
 function myItemList(jsonString){
