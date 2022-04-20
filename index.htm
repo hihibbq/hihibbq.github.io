@@ -206,7 +206,7 @@ function loadImage(chibis) {
 //=================================================================
 
 // update canvas with some information and animation
-var fps = new FpsCtrl(myFrameRate, function(e) {
+var fps = new FpsCtrl(chibis, myFrameRate, function(e) {
 	ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
 	pTime = e.time;
 	var x = (pTime - mTime) * 0.1;
@@ -225,7 +225,7 @@ btn.onclick = function() {
 };
 
 //frame/sec control
-function FpsCtrl(fps, callback) {
+function FpsCtrl(chibis, fps, callback) {
 
 	var	delay = 1000 / fps,
 		time = null,
