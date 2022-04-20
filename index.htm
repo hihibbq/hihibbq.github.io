@@ -294,23 +294,33 @@ function myItemList(jsonString){
   
 
   var s = table;
-  while(s.indexOf(',,') >= 0) 
-	s = s.trim().split(',,').join(',');
-
-  if(s.charAt(0) == ',')
-    s = s.substring(1);
-  if(s.charAt(s.length-1) == ',')
-    s = s.substring(0, s.length-1);
+  while(s.indexOf(',,') >= 0) s = s.trim().split(',,').join(',');
+  if(s.charAt(0) == ',') s = s.substring(1);
+  if(s.charAt(s.length-1) == ',') s = s.substring(0, s.length-1);
 
   //0-8 in ary is useless
   var ary = s.split(',');
   for(var i=0; i < 9; i++)
 	ary[i] = "";
   s = ary.join(',');
-  while(s.indexOf(',,') >= 0) 
-	s = s.trim().split(',,').join(',');
+  while(s.indexOf(',,') >= 0) s = s.trim().split(',,').join(',');
+  if(s.charAt(0) == ',') s = s.substring(1);
+  if(s.charAt(s.length-1) == ',') s = s.substring(0, s.length-1);
 
-
+  s = s.split(',S Vips,').join(',');
+  s = s.split(',S Moderators,').join(',');
+  s = s.split(',S Staff,').join(',');
+  s = s.split(',S Admins,').join(',');
+  s = s.split(',S Global Mods,').join(',');
+  s = s.split(',S Viewers,').join(',');
+  s = s.split(',null,').join(',');
+  s = s.split(',null').join(',');
+  s = s.split('null,').join(',');
+  
+  while(s.indexOf(',,') >= 0) s = s.trim().split(',,').join(',');
+  if(s.charAt(0) == ',') s = s.substring(1);
+  if(s.charAt(s.length-1) == ',') s = s.substring(0, s.length-1);
+  
   alert(s);
   
   return s;
