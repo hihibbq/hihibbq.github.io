@@ -280,7 +280,7 @@ function getUserList(chibis) {
 	fetch(url)
 	  .then(response => response.text())
 	  //.then(data => document.getElementById("jsontbl").innerHTML = myItemList(data.substring(47).slice(0, -2))  
-	  .then(data => twUsers = myItemList(data.substring(47).slice(0, -2)); myStartAnimate(chibis);)  
+	  .then(data => myStartAnimate(myItemList(data.substring(47).slice(0, -2)), chibis)
 	  );
 }
   
