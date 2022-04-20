@@ -31,7 +31,7 @@ name { color: white; text-shadow: 0 0 3px black; }
 
 <script language="JavaScript">
 <!--
-const myFrameRate = 5; //12,24,29.97,30,60
+const myFrameRate = 10; //12,24,29.97,30,60
 const scale = 1;
 const width = 32; //chibi width
 const height = 32; //chibi height
@@ -84,7 +84,7 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
 	ctx.drawImage(bg,0,0, myCanvas.width, myCanvas.height, 0,0, myCanvas.width, myCanvas.height);
 					
 	for(var i=0; i < chibis.length; i++) {
-		if(isUseNewMove()) 
+		if(isUseNewMove(chibis[i])) 
 			chibis[i].move = randomNewMove(chibis[i]);
 		//draw character
 		ctx.drawImage(	chibis[i].img,
@@ -103,7 +103,7 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
 		ctx.fillText(	chibis[i].label, 
 						chibis[i].pos.x - textOffset, //stay middle
 						chibis[i].pos.y - textHeight); //on top
-						
+		
 		//update pos.x pos.y for next move
 		if(chibis[i].move == LEFT) {
 			chibis[i].pos.x -= hStep;
@@ -117,24 +117,24 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
 		else if(chibis[i].move == DOWN) {
 			chibis[i].pos.y += vStep;
 		}
-		//update move set
-		if(isOutofbound(chibis[i]))
-			chibis[i].move = randomNewMove(chibis[i]);
 	}
 }
 
 function isOverlapped(theChibi) {
-	for(var i=0; i<theChibi.id && chibis.length; i++) {
-		if(	(chibis[i].pos.x <= theChibi.pos.x && theChibi.pos.x <= chibis[i].pos.x+width) &&
-			(chibis[i].pos.y <= theChibi.pos.y && theChibi.pos.y <= chibis[i].pos.y+width) )
+	var theX = theChibi.pos.x;
+	var theY = theChibi.pos.y;
+	for(var i=0; i < chibis.length; i++) {
+		if(	(chibis[i].pos.x <= theX && theX <= chibis[i].pos.x + width) &&
+			(chibis[i].pos.y <= theY && theY <= chibis[i].pos.y + height) )
 		return true;
 	}
 	return false;
 }
 
 function isOutofbound(theChibi) {
-	if(	(theChibi.pos.x >= 0 && theChibi.pos.x < myCanvas.width-width) &&
-		(theChibi.pos.y >= 0 && theChibi.pos.y < myCanvas.height-height) )
+	if(	theChibi.pos.x < 0 || theChibi.pos.y < 0 ||
+		theChibi.pos.x > myCanvas.width - width ||
+		theChibi.pos.y > myCanvas.height - height )
 		return true;
 	else 
 		return false;
@@ -149,24 +149,31 @@ function randomPos(theChibi) {
 		rnd = ((Math.round(Math.random()*10000))-1) % (myCanvas.height - height - textHeight);
 		if(rnd < 0) rnd = 0;
 		theChibi.pos.y = rnd;
-		if(!isOverlapped(theChibi))
+		if(!isOverlapped(theChibi) && !isOutofbound(theChibi))
 			break;
 	}
 	return (theChibi.pos);
 }
 
 function randomNewMove(theChibi) {
-	var rnd = ((Math.round(Math.random()*100))-1) % 4;
-	if(rnd < 0) rnd = 0;
+	var rnd = -1;
+	do {
+		rnd = ((Math.round(Math.random()*100))-1) % 4;
+		if(rnd < 0) rnd = 0;
+	} 
+	while(rnd == theChibi.move)
 	theChibi.move = rnd;
-	return (theChibi.move);
+	return (rnd);
 }
 
-function isUseNewMove() {
+function isUseNewMove(theChibi) {
+	if(isOutofbound(theChibi))
+		return(true); //100%
+
+	//75% chance keep current move
 	var rnd = ((Math.round(Math.random()*10000))-1) % 100;
 	if(rnd < 0) rnd = 0;
-	//75% chance keep current move
-	return (rnd < 75 ? false : true); 
+	return (rnd < 98 ? false : true); 
 }
 
 var rndImgList = ",";
