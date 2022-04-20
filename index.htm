@@ -74,7 +74,7 @@ alert(twUsersList);
 						"msg": "",
 						"img": null
 					};
-		chibis[i].pos = randomPos(chibis[i]);
+		chibis[i].pos = randomPos(chibis, chibis[i]);
 		chibis[i].move = randomNewMove(chibis[i]);
 		chibis[i].img = new Image();
 		chibis[i].img.src  = gif1px;
@@ -130,7 +130,7 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
 	}
 }
 
-function isOverlapped(theChibi) {
+function isOverlapped(chibis, theChibi) {
 	var theX = theChibi.pos.x;
 	var theY = theChibi.pos.y;
 	for(var i=0; i < chibis.length; i++) {
@@ -141,7 +141,7 @@ function isOverlapped(theChibi) {
 	return false;
 }
 
-function isOutofbound(theChibi) {
+function isOutofbound(chibis, theChibi) {
 	if(	theChibi.pos.x < 0 || theChibi.pos.y - textHeight < 0 ||
 		theChibi.pos.x > myCanvas.width - width ||
 		theChibi.pos.y > myCanvas.height - height )
@@ -149,7 +149,7 @@ function isOutofbound(theChibi) {
 	return false;
 }
 
-function randomPos(theChibi) {
+function randomPos(chibis, theChibi) {
 	var rnd = -1;
 	for(var i=0; i < 999; i++) { //prevent deadlock when over crowed
 		rnd = ((Math.round(Math.random()*10000))-1) % (myCanvas.width - width);
@@ -158,7 +158,7 @@ function randomPos(theChibi) {
 		rnd = ((Math.round(Math.random()*10000))-1) % (myCanvas.height - height - textHeight);
 		if(rnd < 0) rnd = 0;
 		theChibi.pos.y = rnd;
-		if(!isOverlapped(theChibi) && !isOutofbound(theChibi))
+		if(!isOverlapped(chibis, theChibi) && !isOutofbound(chibis, theChibi))
 			break;
 	}
 	return (theChibi.pos);
