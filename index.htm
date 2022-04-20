@@ -68,6 +68,375 @@ function myStartAnimate0() {
 	    document.getElementById("jsontbl").innerHTML.length > 0 )
 		myStartAnimate();
 	else 
+		setTimeout(myStartAnimate0, 3000);
+}
+
+function myStartAnimate() {
+	var twUsersList = document.getElementById("jsontbl").innerHTML;
+	twUsers = twUsersList.trim().split(",");
+	chibis = twUsersList.trim().split(",");
+	//chibis = new Array(twUsers.length); //num of characters
+
+	for(var i=0; i < chibis.length; i++) {
+		chibis[i] = {	"id": i, 
+						"pos": {"x":-1 , "y":-1}, 
+						"move": null,
+						"label": twUsers[i],
+						"msg": "",
+						"img": null
+					};
+		chibis[i].pos = randomPos(chibis, chibis[i]);
+		chibis[i].move = randomNewMove(chibis[i]);
+		chibis[i].img = new Image();
+		chibis[i].img.src  = gif1px;
+		chibis[i].img.onload = function() {init();};
+	}
+	loadImage(chibis);
+}
+
+function init() {
+	fps.start();
+}
+
+function drawFrame(chibis, frameX, frameY, canvasX, canvasY) {
+	//draw background
+	ctx.drawImage(bg,0,0, myCanvas.width, myCanvas.height, 0,0, myCanvas.width, myCanvas.height);
+					
+	for(var i=0; i < chibis.length; i++) {
+		//draw character
+		ctx.drawImage(	chibis[i].img,
+						frameX * width, chibis[i].move * height, 
+						width, height,
+						chibis[i].pos.x, chibis[i].pos.y, 
+						scaledWidth, scaledHeight );
+
+		//draw label(name)
+		ctx.font = "10px  Comic Sans MS";
+		ctx.shadowColor = "black";
+		ctx.shadowBlur = 3;
+		ctx.fillStyle = "white";
+		var textOffset = (chibis[i].label.length>9 ? chibis[i].label.length*2 : 0);
+		textOffset = (chibis[i].label.length<5 ? -1*chibis[i].label.length : textOffset);
+		ctx.fillText(	chibis[i].label, 
+						chibis[i].pos.x - textOffset, //stay middle
+						chibis[i].pos.y - textHeight); //on top
+
+
+		//update pos.x pos.y for next move
+		if(chibis[i].move == LEFT) 
+			if(chibis[i].pos.x - hStep > 0)
+				chibis[i].pos.x -= hStep;
+		
+		else if(chibis[i].move == RIGHT) 
+			if(chibis[i].pos.x + hStep + width < myCanvas.width)
+				chibis[i].pos.x += hStep;
+			
+		else if(chibis[i].move == UP) 
+			if(chibis[i].pos.y - vStep - textHeight > 0)
+				chibis[i].pos.y -= vStep;
+				
+		else if(chibis[i].move == DOWN) 
+			if(chibis[i].pos.y + vStep + height < myCanvas.height) 
+				chibis[i].pos.y += vStep;
+	}
+}
+
+function isOverlapped(chibis, theChibi) {
+	var theX = theChibi.pos.x;
+	var theY = theChibi.pos.y;
+	for(var i=0; i < chibis.length; i++) {
+		if(	(chibis[i].pos.x <= theX && theX <= chibis[i].pos.x + width) &&
+			(chibis[i].pos.y <= theY && theY <= chibis[i].pos.y + height) )
+		return true;
+	}
+	return false;
+}
+
+function isOutofbound(chibis, theChibi) {
+	if(	theChibi.pos.x < 0 || theChibi.pos.y - textHeight < 0 ||
+		theChibi.pos.x > myCanvas.width - width ||
+		theChibi.pos.y > myCanvas.height - height )
+		return true;
+	return false;
+}
+
+function randomPos(chibis, theChibi) {
+	var rnd = -1;
+	for(var i=0; i < 999; i++) { //prevent deadlock when over crowed
+		rnd = ((Math.round(Math.random()*10000))-1) % (myCanvas.width - width);
+		if(rnd < 0) rnd = 0;
+		theChibi.pos.x = rnd;
+		rnd = ((Math.round(Math.random()*10000))-1) % (myCanvas.height - height - textHeight);
+		if(rnd < 0) rnd = 0;
+		theChibi.pos.y = rnd;
+		if(!isOverlapped(chibis, theChibi) && !isOutofbound(chibis, theChibi))
+			break;
+	}
+	return (theChibi.pos);
+}
+
+function randomNewMove(theChibi) {
+	var newMove = -1;
+	do {
+		newMove = ((Math.round(Math.random()*100))-1) % 4;
+		if(newMove < 0) newMove = 0;
+	} 
+	while(newMove == theChibi.move)
+	theChibi.move = newMove;
+	return (newMove);
+}
+
+function isUseNewMove(theChibi) {
+	//if(isOutofbound(theChibi))
+		//return(true); //100%
+
+	//75% chance keep current move
+	var rnd = ((Math.round(Math.random()*10000))-1) % 100;
+	if(rnd < 0) rnd = 0;
+	return (rnd < 70 ? false : true); 
+}
+
+var rndImgList = ",";
+function randomImgId() {
+	var rnd = ((Math.round(Math.random()*100))-1) % 79; //0 to 78
+	if(rnd < 0) rnd = 0;
+	return rnd;
+}
+
+function loadImage(chibis) {
+	for(var i=0; i < chibis.length; i++) {
+		var rndImg = randomImgId();
+		while(rndImgList.indexOf(","+rndImg+",") >=0 ) {
+			rndImg = randomImgId();
+		}
+		rndImgList += (rndImg+",");
+		chibis[i].img.src = "https://pgomap.github.io/chibis/chibi_"+ rndImg +".png";
+	}
+}
+
+//=================================================================
+
+// update canvas with some information and animation
+var fps = new FpsCtrl(chibis, myFrameRate, function(e) {
+	ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+	pTime = e.time;
+	var x = (pTime - mTime) * 0.1;
+	if (x > myCanvas.width) mTime = pTime;
+	drawFrame(chibis, cycleLoop[currentLoopIndex], currentDirection, 0, 0);
+	currentLoopIndex++;
+	if (currentLoopIndex >= cycleLoop.length) {
+		currentLoopIndex = 0;
+		currentDirection ++;
+	}
+	currentDirection %= 4;
+})
+
+btn.onclick = function() {
+	fps.isPlaying ? fps.pause() : fps.start();
+};
+
+//frame/sec control
+function FpsCtrl(chibis, fps, callback) {
+
+	var	delay = 1000 / fps,
+		time = null,
+		frame = -1,
+		tref;
+
+	function loop(timestamp) {
+		if (time === null) time = timestamp;
+		var seg = Math.floor((timestamp - time) / delay);
+		if (seg > frame) {
+			frame = seg;
+			callback({
+				time: timestamp,
+				frame: frame
+			})
+		}
+		tref = requestAnimationFrame(loop)
+	}
+
+	this.isPlaying = false;
+	
+	this.frameRate = function(newfps) {
+		if (!arguments.length) return fps;
+		fps = newfps;
+		delay = 1000 / fps;
+		frame = -1;
+		time = null;
+	};
+	
+	this.start = function() {
+		if (!this.isPlaying) {
+			this.isPlaying = true;
+			tref = requestAnimationFrame(loop);
+		}
+	};
+	
+	this.pause = function() {
+		if (this.isPlaying) {
+			cancelAnimationFrame(tref);
+			this.isPlaying = false;
+			time = null;
+			frame = -1;
+		}
+	};
+}
+
+//====================================================
+//List of twitch chat user names
+function getUserList(chibis) {
+	var id = '1BrlwpJDJfINkfh_akFqs6XG6XrwEh0vp264QYGrcrmY';
+	var gid = '0';
+	var url = 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json&tq&gid='+gid;
+
+	fetch(url)
+	  .then(response => response.text())
+	  .then(data => document.getElementById("jsontbl").innerHTML = myItemList(data.substring(47).slice(0, -2))  
+	  );
+}
+  
+function myItemList(jsonString){
+  var json = JSON.parse(jsonString);
+  var table = ',';
+  json.table.rows.forEach(ligne => {
+    table += ','
+    ligne.c.forEach(cellule => {
+        try{var valeur = cellule.f ? cellule.f : cellule.v}
+        catch(e){var valeur = ''}
+        table += ',' + valeur + ','
+      }
+    )
+    table += ','
+    }
+  )
+  table += ','
+  
+  //////////////////////////////////////////
+  var s = table;
+  while(s.indexOf(',,') >= 0) s = s.trim().split(',,').join(',');
+  if(s.charAt(0) == ',') s = s.substring(1);
+  if(s.charAt(s.length-1) == ',') s = s.substring(0, s.length-1);
+
+  //0-8 in ary is useless
+  var ary = s.split(',');
+  for(var i=0; i < 9; i++)
+	ary[i] = "";
+  s = ary.join(',');
+  while(s.indexOf(',,') >= 0) s = s.trim().split(',,').join(',');
+  if(s.charAt(0) == ',') s = s.substring(1);
+  if(s.charAt(s.length-1) == ',') s = s.substring(0, s.length-1);
+
+  s = s.split(',S Vips,').join(',');
+  s = s.split(',S Moderators,').join(',');
+  s = s.split(',S Staff,').join(',');
+  s = s.split(',S Admins,').join(',');
+  s = s.split(',S Global Mods,').join(',');
+  s = s.split(',S Viewers,').join(',');
+  s = s.split(',null,').join(',');
+  s = s.split(',null').join(',');
+  s = s.split('null,').join(',');
+  
+  while(s.indexOf(',,') >= 0) s = s.trim().split(',,').join(',');
+  if(s.charAt(0) == ',') s = s.substring(1);
+  if(s.charAt(s.length-1) == ',') s = s.substring(0, s.length-1);
+  
+  return s;
+}
+
+function myItemTable(jsonString){
+  var json = JSON.parse(jsonString);
+  var table = '<table>';
+  json.table.rows.forEach(ligne => {
+    table += '<tr>'
+    ligne.c.forEach(cellule => {
+        try{var valeur = cellule.f ? cellule.f : cellule.v}
+        catch(e){var valeur = ''}
+        table += '<td>' + valeur + '</td>'
+      }
+    )
+    table += '</tr>'
+    }
+  )
+  table += '</table>'
+  return table
+}
+//====================================================
+//-->
+</script>
+
+</body>
+</html>
+
+
+
+====================================================
+use actual twitch user list
+add msg feature
+see how to make use of:
+   nightbot/moobot cmd -> touch my json RESTful
+
+====================================================
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {font:16px sans-serif}
+canvas { border: 1px solid #E8E8E8; }
+table { border-collapse: collapse; }
+td, th { border: 1px solid black; }
+name { color: white; text-shadow: 0 0 3px black; }
+</style>
+</head>
+<body>
+
+<canvas id='myCanvas' width="700" height="200"></canvas>
+<br><br>
+<button id=btn>Start / Stop</button>
+<br><br>
+<div id="jsontbl">.</div>
+
+<script language="JavaScript">
+<!--
+const myFrameRate = 10; //12,24,29.97,30,60
+const scale = 1;
+const width = 32; //chibi width
+const height = 32; //chibi height
+const scaledWidth = scale * width;
+const scaledHeight = scale * height;
+const textHeight = 3;
+const hStep = 5;
+const vStep = 3;
+const UP=3,DOWN=0,LEFT=1,RIGHT=2;
+
+var bg = new Image();
+bg.src = "https://pgomap.github.io/chibis/bg2.png";
+
+
+const cycleLoop = [0, 1, 0, 2];
+let currentLoopIndex = 0;
+let frameCount = 0;
+let currentDirection = 0;
+
+var pTime = 0, mTime = 0, x = 0;
+var ctx = myCanvas.getContext("2d");
+
+const gif1px = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
+var twUsers = "admin,staff,mod";
+var chibis = null;
+getUserList(chibis);
+//=================================================================
+
+myStartAnimate0();
+
+function myStartAnimate0() {
+	if( document.getElementById("jsontbl").innerHTML != null &&
+	    document.getElementById("jsontbl").innerHTML != "" &&
+	    document.getElementById("jsontbl").innerHTML.length > 0 )
+		myStartAnimate();
+	else 
 		setTimeout(3000, myStartAnimate0);
 }
 
