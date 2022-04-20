@@ -62,7 +62,8 @@ getUserList(chibis);
 
 function myStartAnimate(twUsersList, chibis) {
 	twUsers = twUsersList.trim().split(",");
-	chibis = new Array(twUsers.length); //num of characters
+	chibis = twUsersList.trim().split(",");
+	//chibis = new Array(twUsers.length); //num of characters
 
 	for(var i=0; i < chibis.length; i++) {
 		chibis[i] = {	"id": i, 
