@@ -60,7 +60,16 @@ var chibis = null;
 getUserList(chibis);
 //=================================================================
 
-myStartAnimate();
+myStartAnimate0();
+
+function myStartAnimate0() {
+	if( document.getElementById("jsontbl").innerHTML != null &&
+	    document.getElementById("jsontbl").innerHTML != "" &&
+	    document.getElementById("jsontbl").innerHTML.length > 0 )
+		myStartAnimate();
+	else 
+		setTimeout(3000, myStartAnimate0);
+}
 
 function myStartAnimate() {
 	var twUsersList = document.getElementById("jsontbl").innerHTML;
