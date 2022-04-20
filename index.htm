@@ -54,27 +54,30 @@ let currentDirection = 0;
 var pTime = 0, mTime = 0, x = 0;
 var ctx = myCanvas.getContext("2d");
 
-
-var twUsers = getUserList();
-(async () => await new Promise(resolve => setTimeout(resolve, 5000)))();
-twUsers = twUsers.trim().split(",");
-
-//=================================================================
 const gif1px = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
-var chibis = new Array(twUsers.length); //num of characters
-for(var i=0; i < chibis.length; i++) {
-	chibis[i] = {	"id": i, 
-					"pos": {"x":-1 , "y":-1}, 
-					"move": null,
-					"label": twUsers[i],
-					"msg": "",
-					"img": null
-				};
-	chibis[i].pos = randomPos(chibis[i]);
-	chibis[i].move = randomNewMove(chibis[i]);
-	chibis[i].img = new Image();
-	chibis[i].img.src  = gif1px;
-	chibis[i].img.onload = function() {init();};
+var twUsers = "";
+var chibis = null;
+getUserList(chibis);
+//=================================================================
+
+function myStartAnimate(chibis) {
+	twUsers = twUsers.trim().split(",");
+	chibis = new Array(twUsers.length); //num of characters
+
+	for(var i=0; i < chibis.length; i++) {
+		chibis[i] = {	"id": i, 
+						"pos": {"x":-1 , "y":-1}, 
+						"move": null,
+						"label": twUsers[i],
+						"msg": "",
+						"img": null
+					};
+		chibis[i].pos = randomPos(chibis[i]);
+		chibis[i].move = randomNewMove(chibis[i]);
+		chibis[i].img = new Image();
+		chibis[i].img.src  = gif1px;
+		chibis[i].img.onload = function() {init();};
+	}
 }
 
 function init() {
@@ -269,7 +272,7 @@ function FpsCtrl(fps, callback) {
 
 //====================================================
 //List of twitch chat user names
-function getUserList() {
+function getUserList(chibis) {
 	var id = '1BrlwpJDJfINkfh_akFqs6XG6XrwEh0vp264QYGrcrmY';
 	var gid = '0';
 	var url = 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json&tq&gid='+gid;
@@ -277,7 +280,7 @@ function getUserList() {
 	fetch(url)
 	  .then(response => response.text())
 	  //.then(data => document.getElementById("jsontbl").innerHTML = myItemList(data.substring(47).slice(0, -2))  
-	  .then(data => twUsers = myItemList(data.substring(47).slice(0, -2))  
+	  .then(data => twUsers = myItemList(data.substring(47).slice(0, -2); myStartAnimate(chibis);)  
 	  );
 }
   
