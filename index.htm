@@ -62,6 +62,7 @@ var chibis = twUsers.trim().split(",");;
 myStartAnimate0();
 
 function myStartAnimate0() {
+alert(document.getElementById("jsontbl").innerHTML);
 	if( document.getElementById("jsontbl").innerHTML == "." )
 		setTimeout(myStartAnimate0, 3000);
 	else 
