@@ -54,7 +54,7 @@ let currentDirection = 0;
 var pTime = 0, mTime = 0, x = 0;
 var ctx = myCanvas.getContext("2d");
 
-var twUsers = "0omkco0,17bb,25dielomo,420superman1,5gmud7,999569,a123b456mmaa,aesopt41532,alan_fyk,alancml,alex3141314,andy1347,annaeuue,arthur010525,asa60126,asdasd113322,ayatv1,ayers6,ben92828,benben_2022,berisa4102,bigoldstone,black9519,blackpaper,booburn1996,bottomsu";
+var twUsers = "A,B,C";
 twUsers = twUsers.trim().split(",");
 
 //=================================================================
@@ -267,14 +267,17 @@ function FpsCtrl(fps, callback) {
 
 //====================================================
 //List of twitch chat user names
-var id = '1BrlwpJDJfINkfh_akFqs6XG6XrwEh0vp264QYGrcrmY';
-var gid = '0';
-var url = 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json&tq&gid='+gid;
+function getUserList() {
+	var id = '1BrlwpJDJfINkfh_akFqs6XG6XrwEh0vp264QYGrcrmY';
+	var gid = '0';
+	var url = 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json&tq&gid='+gid;
 
-fetch(url)
-  .then(response => response.text())
-  .then(data => document.getElementById("jsontbl").innerHTML = myItemList(data.substring(47).slice(0, -2))  
-  );
+	fetch(url)
+	  .then(response => response.text())
+	  //.then(data => document.getElementById("jsontbl").innerHTML = myItemList(data.substring(47).slice(0, -2))  
+	  .then(data => twUsers = myItemList(data.substring(47).slice(0, -2))  
+	  );
+}
   
 function myItemList(jsonString){
   var json = JSON.parse(jsonString);
