@@ -62,12 +62,10 @@ var chibis = twUsers.trim().split(",");;
 myStartAnimate0();
 
 function myStartAnimate0() {
-	if( document.getElementById("jsontbl").innerHTML != null &&
-	    document.getElementById("jsontbl").innerHTML != "" &&
-	    document.getElementById("jsontbl").innerHTML.length > 0 )
-		myStartAnimate();
-	else 
+	if( document.getElementById("jsontbl").innerHTML == "." )
 		setTimeout(myStartAnimate0, 3000);
+	else 
+		myStartAnimate();
 }
 
 function myStartAnimate() {
