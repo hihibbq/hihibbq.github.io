@@ -294,17 +294,26 @@ function myItemList(jsonString){
   
 
   var s = table;
-  while(s.indexOf(',,') >= 0) {
+  while(s.indexOf(',,') >= 0) 
 	s = s.trim().split(',,').join(',');
-  }
+
   if(s.charAt(0) == ',')
     s = s.substring(1);
   if(s.charAt(s.length-1) == ',')
     s = s.substring(0, s.length-1);
 
-  alert(table)
+  //0-8 in ary is useless
+  var ary = s.split(',');
+  for(var i=0; i < 9; i++)
+	ary[i] = "";
+  s = ary.join(',');
+  while(s.indexOf(',,') >= 0) 
+	s = s.trim().split(',,').join(',');
+
+
+  alert(s);
   
-  return table
+  return s;
 }
 
 function myItemTable(jsonString){
