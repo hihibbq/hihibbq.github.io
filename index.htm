@@ -56,7 +56,7 @@ var ctx = myCanvas.getContext("2d");
 
 const gif1px = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
 var twUsers = "admin,staff,mod";
-var chibis = null;
+var chibis = twUsersList.trim().split(",");;
 getUserList(chibis);
 //=================================================================
 
@@ -98,7 +98,7 @@ function init() {
 	fps.start();
 }
 
-function drawFrame(chibis, frameX, frameY, canvasX, canvasY) {
+function drawFrame(frameX, frameY, canvasX, canvasY) {
 	//draw background
 	ctx.drawImage(bg,0,0, myCanvas.width, myCanvas.height, 0,0, myCanvas.width, myCanvas.height);
 					
@@ -141,7 +141,7 @@ function drawFrame(chibis, frameX, frameY, canvasX, canvasY) {
 	}
 }
 
-function isOverlapped(chibis, theChibi) {
+function isOverlapped(theChibi) {
 	var theX = theChibi.pos.x;
 	var theY = theChibi.pos.y;
 	for(var i=0; i < chibis.length; i++) {
@@ -152,7 +152,7 @@ function isOverlapped(chibis, theChibi) {
 	return false;
 }
 
-function isOutofbound(chibis, theChibi) {
+function isOutofbound(theChibi) {
 	if(	theChibi.pos.x < 0 || theChibi.pos.y - textHeight < 0 ||
 		theChibi.pos.x > myCanvas.width - width ||
 		theChibi.pos.y > myCanvas.height - height )
@@ -160,7 +160,7 @@ function isOutofbound(chibis, theChibi) {
 	return false;
 }
 
-function randomPos(chibis, theChibi) {
+function randomPos(theChibi) {
 	var rnd = -1;
 	for(var i=0; i < 999; i++) { //prevent deadlock when over crowed
 		rnd = ((Math.round(Math.random()*10000))-1) % (myCanvas.width - width);
