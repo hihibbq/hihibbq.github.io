@@ -1,3 +1,15 @@
+<!--
+====================================================
+	TO-DO:
+====================================================
+use actual twitch user list
+add msg feature
+see how to make use of:
+   nightbot/moobot cmd -> touch my json RESTful
+
+====================================================
+-->
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -72,8 +84,6 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
 	ctx.drawImage(bg,0,0, myCanvas.width, myCanvas.height, 0,0, myCanvas.width, myCanvas.height);
 					
 	for(var i=0; i < chibis.length; i++) {
-		if(isUseNewMove(chibis[i])) 
-			chibis[i].move = randomNewMove(chibis[i]);
 		//draw character
 		ctx.drawImage(	chibis[i].img,
 						frameX * width, chibis[i].move * height, 
@@ -91,20 +101,24 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
 		ctx.fillText(	chibis[i].label, 
 						chibis[i].pos.x - textOffset, //stay middle
 						chibis[i].pos.y - textHeight); //on top
-		
+
+
 		//update pos.x pos.y for next move
-		if(chibis[i].move == LEFT) {
-			chibis[i].pos.x -= hStep;
-		}
-		else if(chibis[i].move == RIGHT) {
-			chibis[i].pos.x += hStep;
-		}
-		else if(chibis[i].move == UP) {
-			chibis[i].pos.y -= vStep;
-		}
-		else if(chibis[i].move == DOWN) {
-			chibis[i].pos.y += vStep;
-		}
+		if(chibis[i].move == LEFT) 
+			if(chibis[i].pos.x - hStep > 0)
+				chibis[i].pos.x -= hStep;
+		
+		else if(chibis[i].move == RIGHT) 
+			if(chibis[i].pos.x + hStep + width < myCanvas.width)
+				chibis[i].pos.x += hStep;
+			
+		else if(chibis[i].move == UP) 
+			if(chibis[i].pos.y - vStep - textHeight > 0)
+				chibis[i].pos.y -= vStep;
+				
+		else if(chibis[i].move == DOWN) 
+			if(chibis[i].pos.y + vStep + height < myCanvas.height) 
+				chibis[i].pos.y += vStep;
 	}
 }
 
@@ -120,12 +134,11 @@ function isOverlapped(theChibi) {
 }
 
 function isOutofbound(theChibi) {
-	if(	theChibi.pos.x < 0 || theChibi.pos.y < 0 ||
+	if(	theChibi.pos.x < 0 || theChibi.pos.y - textHeight < 0 ||
 		theChibi.pos.x > myCanvas.width - width ||
 		theChibi.pos.y > myCanvas.height - height )
 		return true;
-	else 
-		return false;
+	return false;
 }
 
 function randomPos(theChibi) {
@@ -144,24 +157,24 @@ function randomPos(theChibi) {
 }
 
 function randomNewMove(theChibi) {
-	var rnd = -1;
+	var newMove = -1;
 	do {
-		rnd = ((Math.round(Math.random()*100))-1) % 4;
-		if(rnd < 0) rnd = 0;
+		newMove = ((Math.round(Math.random()*100))-1) % 4;
+		if(newMove < 0) newMove = 0;
 	} 
-	while(rnd == theChibi.move)
-	theChibi.move = rnd;
-	return (rnd);
+	while(newMove == theChibi.move)
+	theChibi.move = newMove;
+	return (newMove);
 }
 
 function isUseNewMove(theChibi) {
-	if(isOutofbound(theChibi))
-		return(true); //100%
+	//if(isOutofbound(theChibi))
+		//return(true); //100%
 
 	//75% chance keep current move
 	var rnd = ((Math.round(Math.random()*10000))-1) % 100;
 	if(rnd < 0) rnd = 0;
-	return (rnd < 98 ? false : true); 
+	return (rnd < 70 ? false : true); 
 }
 
 var rndImgList = ",";
