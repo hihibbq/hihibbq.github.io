@@ -55,9 +55,8 @@ var pTime = 0, mTime = 0, x = 0;
 var ctx = myCanvas.getContext("2d");
 
 
-
-var twUsers = "A,B,C";
-var dummy = getUserList();
+var twUsers = getUserList();
+(async () => await new Promise(resolve => setTimeout(resolve, 5000)))();
 twUsers = twUsers.trim().split(",");
 
 //=================================================================
