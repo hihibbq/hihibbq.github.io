@@ -60,8 +60,8 @@ var chibis = null;
 getUserList(chibis);
 //=================================================================
 
-function myStartAnimate(chibis) {
-	twUsers = twUsers.trim().split(",");
+function myStartAnimate(twUsersList, chibis) {
+	twUsers = twUsersList.trim().split(",");
 	chibis = new Array(twUsers.length); //num of characters
 
 	for(var i=0; i < chibis.length; i++) {
