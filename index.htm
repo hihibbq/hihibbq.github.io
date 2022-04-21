@@ -85,7 +85,6 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
 	if(theJson != "." && theJson != userList) {
 		userList = theJson;
 		twUsers = userList.split(",");
-		//chibis = new Array(twUsers.length); //num of characters
 		if(twUsers.length > chibis.length) {
 			for(var i=0; i < twUsers.length - chibis.length; i++)
 				chibis.push( {"id": -1, "pos": {"x":-1 , "y":-1}, "move": null, "label": "", "msg": "", "img": null} );
@@ -118,6 +117,7 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
 						scaledWidth, scaledHeight );
 
 		//draw label(name)
+		if(label==null || label=="") continue;
 		ctx.font = "10px  Comic Sans MS";
 		ctx.shadowColor = "black";
 		ctx.shadowBlur = 3;
