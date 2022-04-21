@@ -3,8 +3,6 @@
 ====================================================
 	TO-DO:
 ====================================================
-use actual twitch user list
-add msg feature
 see how to make use of:
    nightbot/moobot cmd -> touch my json RESTful
 add random movement -> msgbox(forced facing front)
@@ -32,6 +30,26 @@ name { color: white; text-shadow: 0 0 3px black; }
 
 <script language="JavaScript">
 <!--
+//query sring parsing
+var url = location.href;
+var qstr = "";
+var params = {};
+if(url.indexOf("?") > 0) {
+	//bg,w,h,max,ch,
+	var qstr = url.substring(url.indexOf("?")+1);
+	qstr = qstr.trim().split("&");
+
+	for(var i=0; i < qstr.length; i++) {
+		qstr[i] = qstr[i].split("=");
+	}
+	
+	for(var i=0; i < qstr.length; i++) {
+		eval("params."+qstr[i][0]+"="+qstr[i][1]);
+	}
+}
+
+
+//====================================================
 const myFrameRate = 10; //12,24,29.97,30,60
 const scale = 1;
 const width = 32; //chibi width
@@ -41,11 +59,10 @@ const scaledHeight = scale * height;
 const textHeight = 8;
 const hStep = 5;
 const vStep = 3;
-const UP=3,DOWN=0,LEFT=1,RIGHT=2;
+const DOWN=0,LEFT=1,RIGHT=2,UP=3,MSG=4;
 
-var bg = new Image();
-bg.src = "https://pgomap.github.io/chibis/bg2.png";
-
+var bg = new Image(); 
+bg.src = "https://hihibbq.github.io/chibis/bg2.png";
 
 const cycleLoop = [0, 1, 0, 2];
 let currentLoopIndex = 0;
@@ -110,11 +127,18 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
 		if(!chibis[i].active || chibis[i].id < 0) continue;
 	
 		//draw character
-		ctx.drawImage(	chibis[i].img,
-						frameX * width, chibis[i].move * height, 
-						width, height,
-						chibis[i].pos.x, chibis[i].pos.y, 
-						scaledWidth, scaledHeight );
+		if(chibis[i].move == MSG)
+			ctx.drawImage(	chibis[i].img,
+							0 * width, 0 * height, 
+							width, height,
+							chibis[i].pos.x, chibis[i].pos.y, 
+							scaledWidth, scaledHeight );
+		else //normal
+			ctx.drawImage(	chibis[i].img,
+							frameX * width, chibis[i].move * height, 
+							width, height,
+							chibis[i].pos.x, chibis[i].pos.y, 
+							scaledWidth, scaledHeight );
 
 		//draw label(name)
 		if(chibis[i].label==null || chibis[i].label=="") continue;
@@ -130,7 +154,14 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
 
 
 		//update pos.x pos.y for next move
-		if(chibis[i].move == LEFT) {
+		if(chibis[i].move == MSG) {
+			var rnd = i % 3;
+			var msgImg = new Image();
+			msgImg.src  = "https://hihibbq.github.io/img/msgbox"+(1+rnd)+".png";
+			ctx.drawImage(	msgImg, chibis[i].pos.x+12, chibis[i].pos.y-18 );
+			chibis[i].move = randomNewMove(chibis[i]);
+		}
+		else if(chibis[i].move == LEFT) {
 			if( !isOutofboundXY(chibis[i].pos.x-hStep, chibis[i].pos.y) ) {
 				chibis[i].pos.x -= hStep;
 				if(isUseNewMove(chibis[i])) {
@@ -216,6 +247,19 @@ function randomPos(theChibi) {
 }
 
 function randomNewMove(theChibi) {
+	if(theChibi.move == MSG) {
+		var rnd = ((Math.round(Math.random()*10000))-1) % 100;
+		if(rnd < 0) rnd = 0;
+		if(rnd < 90) return (MSG); //hold a bit
+	}
+	//rare chances to perform a chat action
+	var rnd = ((Math.round(Math.random()*10000))-1) % 100;
+	if(rnd < 0) rnd = 0;
+	if(rnd > 88) {
+		theChibi.move = MSG;
+		return (MSG); 
+	}
+	//UP,DOWN,LEFT,RIGHT
 	var newMove = theChibi.move;
 	while(newMove == theChibi.move) {
 		newMove = ((Math.round(Math.random()*100))-1) % 4;
@@ -246,7 +290,7 @@ function loadImage() {
 			rndImg = randomImgId();
 		}
 		rndImgList += (","+rndImg+",");
-		chibis[i].img.src = "https://pgomap.github.io/chibis/chibi_"+ rndImg +".png";
+		chibis[i].img.src = "https://hihibbq.github.io/chibis/chibi_"+ rndImg +".png";
 	}
 }
 loadImage();
