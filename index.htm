@@ -83,7 +83,8 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
 	//refresh a new user list
 	var theJson = document.getElementById("jsontbl").innerHTML.trim();
 	if(theJson != "." && theJson != userList) {
-		twUsers = "broadcaster,streamer,admin,staff,mod,vip,chat,viewer,user".split(",");
+		userList = theJson;
+		twUsers = userList.split(",");
 		//chibis = new Array(twUsers.length); //num of characters
 		if(twUsers.length > chibis.length) {
 			for(var i=0; i < twUsers.length - chibis.length; i++)
