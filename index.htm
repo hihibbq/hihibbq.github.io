@@ -56,7 +56,8 @@ var pTime = 0, mTime = 0, x = 0;
 var ctx = myCanvas.getContext("2d");
 
 const gif1px = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
-var userList = "broadcaster,streamer,admin,staff,mod,vip,chat,viewer,user"; 
+var userList = "broadcaster,streamer,admin,staff,mod,vip,chat,viewer,user" +
+			   ",peter,john,may,paul,david,may,jane,yuki,mandy,mary,stephen,coco,nacy,apple,orange,hello,xmas"; 
 var twUsers = userList.split(",");
 var chibis = new Array(twUsers.length); //num of characters
 
@@ -66,7 +67,8 @@ for(var i=0; i < chibis.length; i++) {
 					"move": null,
 					"label": twUsers[i],
 					"msg": "",
-					"img": null
+					"img": null,
+					"active": true
 				};
 	chibis[i].pos = randomPos(chibis[i]);
 	chibis[i].move = randomNewMove(chibis[i]);
@@ -90,18 +92,14 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
 				chibis.push( {"id": -1, "pos": {"x":-1 , "y":-1}, "move": null, "label": "", "msg": "", "img": null} );
 		}
 		for(var i=0; i < chibis.length; i++) {
-			chibis[i] = {	"id": i, 
-							"pos": {"x":-1 , "y":-1}, 
-							"move": null,
-							"label": twUsers[i],
-							"msg": "",
-							"img": null
-						};
-			chibis[i].pos = randomPos(chibis[i]);
-			chibis[i].move = randomNewMove(chibis[i]);
-			chibis[i].img = new Image();
-			chibis[i].img.src  = gif1px;
-			chibis[i].img.onload = function() {init();};
+			if(i >= twUsers.length) {
+				chibis[i].id = -1;
+				chibis[i].label = "";
+				chibis[i].active = false;
+				continue;
+			}
+			chibis[i].id = i;
+			chibis[i].label = twUsers[i];
 		}
 	}
 
