@@ -6,6 +6,7 @@
 see how to make use of:
    nightbot/moobot cmd -> touch my json RESTful
 add random movement -> msgbox(forced facing front)
+better middle align text
 ====================================================
 -->
 
@@ -49,8 +50,8 @@ if(url.indexOf("?") > 0) {
 	}
 }
 
-if(params.w) document.getElementById('myCanvas').style.width = params.w;
-if(params.h) document.getElementById('myCanvas').style.height = params.h;
+if(params.w) document.getElementById('myCanvas').width = 1*params.w;
+if(params.h) document.getElementById('myCanvas').height = 1*params.h;
 
 //====================================================
 const myFrameRate = 10; //12,24,29.97,30,60
@@ -63,10 +64,13 @@ const textHeight = 8;
 const hStep = 5;
 const vStep = 3;
 const DOWN=0,LEFT=1,RIGHT=2,UP=3,MSG=4;
+const gif1px = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
 
 var bg = new Image(); 
 bg.src = "https://hihibbq.github.io/chibis/bg2.png";
-
+if(params.bg && params.bg=='0') bg.src = gif1px;
+if(params.bg && params.bg=='1') bg.src = "https://hihibbq.github.io/chibis/bg1.png";
+	
 const cycleLoop = [0, 1, 0, 2];
 let currentLoopIndex = 0;
 let frameCount = 0;
@@ -75,7 +79,6 @@ let currentDirection = 0;
 var pTime = 0, mTime = 0, x = 0;
 var ctx = myCanvas.getContext("2d");
 
-const gif1px = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
 var userList = "broadcaster,streamer,admin,staff,mod,vip,chat,viewer,user" +
 			   ",peter,john,may,paul,david,may,jane,yuki,mandy,mary,stephen,coco,nacy,apple,orange,hello,xmas"; 
 var twUsers = userList.split(",");
