@@ -5,8 +5,7 @@
 ====================================================
 see how to make use of:
    nightbot/moobot cmd -> touch my json RESTful
-add random movement -> msgbox(forced facing front)
-better middle align text
+better middle align text (char-by-char)
 ====================================================
 -->
 
@@ -386,9 +385,9 @@ function repeatingFetch() {
 	  .then(response => response.text())
 	  .then(data => document.getElementById("jsontbl").innerHTML = getChatterList(data)
 	  );
-	setTimeout(repeatingFetch, 30000);
+	setTimeout(repeatingFetch, 60000);
 }
-setTimeout(repeatingFetch, 30000);
+setTimeout(repeatingFetch, 60000);
  
 function getChatterList(jsonStr){
 	jsonStr = jsonStr.trim().substring(6);
