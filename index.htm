@@ -45,7 +45,7 @@ if(url.indexOf("?") > 0) {
 	}
 	
 	for(var i=0; i < qstr.length; i++) {
-		eval("params."+qstr[i][0]+"="+qstr[i][1]);
+		eval('params.'+qstr[i][0]+'="'+qstr[i][1]+'"');
 	}
 }
 
