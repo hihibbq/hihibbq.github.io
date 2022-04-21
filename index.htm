@@ -56,7 +56,8 @@ var pTime = 0, mTime = 0, x = 0;
 var ctx = myCanvas.getContext("2d");
 
 const gif1px = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
-var twUsers = "broadcaster,streamer,admin,staff,mod,vip,chat,viewer,user".split(",");
+var userList = "broadcaster,streamer,admin,staff,mod,vip,chat,viewer,user"; 
+var twUsers = userList.split(",");
 var chibis = new Array(twUsers.length); //num of characters
 
 for(var i=0; i < chibis.length; i++) {
@@ -81,8 +82,27 @@ function init() {
 function drawFrame(frameX, frameY, canvasX, canvasY) {
 	//refresh a new user list
 	var theJson = document.getElementById("jsontbl").innerHTML.trim();
-	if(theJson != ".") {
-		alert(theJson)
+	if(theJson != "." && theJson != userList) {
+		twUsers = "broadcaster,streamer,admin,staff,mod,vip,chat,viewer,user".split(",");
+		//chibis = new Array(twUsers.length); //num of characters
+		if(twUsers.length > chibis.length) {
+			for(var i=0; i < twUsers.length - chibis.length; i++)
+				chibis.push( {"id": -1, "pos": {"x":-1 , "y":-1}, "move": null, "label": "", "msg": "", "img": null} );
+		}
+		for(var i=0; i < chibis.length; i++) {
+			chibis[i] = {	"id": i, 
+							"pos": {"x":-1 , "y":-1}, 
+							"move": null,
+							"label": twUsers[i],
+							"msg": "",
+							"img": null
+						};
+			chibis[i].pos = randomPos(chibis[i]);
+			chibis[i].move = randomNewMove(chibis[i]);
+			chibis[i].img = new Image();
+			chibis[i].img.src  = gif1px;
+			chibis[i].img.onload = function() {init();};
+		}
 	}
 
 	//draw background
