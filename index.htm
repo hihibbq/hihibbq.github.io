@@ -49,6 +49,8 @@ if(url.indexOf("?") > 0) {
 	}
 }
 
+if(params.w) document.getElementById('myCanvas').style.width = params.w;
+if(params.h) document.getElementById('myCanvas').style.height = params.h;
 
 //====================================================
 const myFrameRate = 10; //12,24,29.97,30,60
@@ -373,7 +375,6 @@ if(params.ch && params.ch == "whitewing940920") gid=309552267;
 if(params.ch && params.ch == "hihibbq")         gid=1414739331;
 if(params.ch && params.ch == "underground_dv")  gid=390745192;
 if(params.ch && params.ch == "shrimps247")      gid=632849283;
-alert(pa)
 var url = 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json&tq&gid='+gid;
 
 fetch(url)
