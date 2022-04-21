@@ -12,6 +12,7 @@ add random movement -> msgbox(forced facing front)
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="mobile-web-app-capable" content="yes">
 <style>
 body {font:16px sans-serif}
 canvas { border: 1px solid #E8E8E8; }
@@ -367,12 +368,27 @@ function FpsCtrl(fps, callback) {
 //List of twitch chat user names
 var id = '1BrlwpJDJfINkfh_akFqs6XG6XrwEh0vp264QYGrcrmY';
 var gid = '0';
+if(params.ch && params.ch == "zaft_officer")    gid=0;
+if(params.ch && params.ch == "whitewing940920") gid=1;
+if(params.ch && params.ch == "hihibbq")         gid=2;
+if(params.ch && params.ch == "underground_dv")  gid=3;
+if(params.ch && params.ch == "shrimps247")      gid=4;
 var url = 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json&tq&gid='+gid;
 
 fetch(url)
   .then(response => response.text())
   .then(data => document.getElementById("jsontbl").innerHTML = myItemList(data.substring(47).slice(0, -2))  
   );
+
+
+function repeatingFetch() {
+	fetch(url)
+	  .then(response => response.text())
+	  .then(data => document.getElementById("jsontbl").innerHTML = myItemList(data.substring(47).slice(0, -2))  
+	  );
+	setTimeout(repeatingFetch, 5000);
+}
+setTimeout(repeatingFetch, 5000);
   
 function myItemList(jsonString){
   var json = JSON.parse(jsonString);
