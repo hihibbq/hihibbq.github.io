@@ -369,10 +369,11 @@ function FpsCtrl(fps, callback) {
 var id = '1BrlwpJDJfINkfh_akFqs6XG6XrwEh0vp264QYGrcrmY';
 var gid = '0';
 if(params.ch && params.ch == "zaft_officer")    gid=0;
-if(params.ch && params.ch == "whitewing940920") gid=1;
-if(params.ch && params.ch == "hihibbq")         gid=2;
-if(params.ch && params.ch == "underground_dv")  gid=3;
-if(params.ch && params.ch == "shrimps247")      gid=4;
+if(params.ch && params.ch == "whitewing940920") gid=309552267;
+if(params.ch && params.ch == "hihibbq")         gid=1414739331;
+if(params.ch && params.ch == "underground_dv")  gid=390745192;
+if(params.ch && params.ch == "shrimps247")      gid=632849283;
+alert(pa)
 var url = 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json&tq&gid='+gid;
 
 fetch(url)
@@ -410,7 +411,7 @@ function myItemList(jsonString){
   if(s.charAt(0) == ',') s = s.substring(1);
   if(s.charAt(s.length-1) == ',') s = s.substring(0, s.length-1);
 
-  //skip 0-8 cells in ary 
+  //lazy: skip 0-8 cells in ary 
   var ary = s.split(',');
   for(var i=0; i < 9; i++)
 	ary[i] = "";
@@ -430,25 +431,6 @@ function myItemList(jsonString){
   if(s.charAt(s.length-1) == ',') s = s.substring(0, s.length-1);
   return s;
 }
-
-function myItemTable(jsonString){
-  var json = JSON.parse(jsonString);
-  var table = '<table>';
-  json.table.rows.forEach(ligne => {
-    table += '<tr>'
-    ligne.c.forEach(cellule => {
-        try{var valeur = cellule.f ? cellule.f : cellule.v}
-        catch(e){var valeur = ''}
-        table += '<td>' + valeur + '</td>'
-      }
-    )
-    table += '</tr>'
-    }
-  )
-  table += '</table>'
-  return table
-}
-//====================================================
 //-->
 </script>
 
