@@ -371,69 +371,46 @@ function FpsCtrl(fps, callback) {
 
 //====================================================
 //List of twitch chat user names
-var id = '1BrlwpJDJfINkfh_akFqs6XG6XrwEh0vp264QYGrcrmY';
-var gid = '0';
-if(params.ch && params.ch == "zaft_officer")    gid=0;
-if(params.ch && params.ch == "whitewing940920") gid=309552267;
-if(params.ch && params.ch == "hihibbq")         gid=1414739331;
-if(params.ch && params.ch == "underground_dv")  gid=390745192;
-if(params.ch && params.ch == "shrimps247")      gid=632849283;
-var url = 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json&tq&gid='+gid;
 
+var twChName = "hihibbq";
+if(params.ch && params.ch != "") twChName = params.ch;
+var url = "https://tmi.twitch.tv/group/user/"+ twChName +"/chatters";
+url = "https://json2jsonp.com/?url="+ encodeURIComponent(url)+"&callback=chatters";
 fetch(url)
   .then(response => response.text())
-  .then(data => document.getElementById("jsontbl").innerHTML = myItemList(data.substring(47).slice(0, -2))  
+  .then(data => document.getElementById("jsontbl").innerHTML = getChatterList(data)  
   );
-
-
+  
 function repeatingFetch() {
 	fetch(url)
 	  .then(response => response.text())
-	  .then(data => document.getElementById("jsontbl").innerHTML = myItemList(data.substring(47).slice(0, -2))  
+	  .then(data => document.getElementById("jsontbl").innerHTML = getChatterList(data)
 	  );
-	setTimeout(repeatingFetch, 5000);
+	setTimeout(repeatingFetch, 30000);
 }
-setTimeout(repeatingFetch, 5000);
-  
-function myItemList(jsonString){
-  var json = JSON.parse(jsonString);
-  var s = ',';
-  json.table.rows.forEach(ligne => {
-    s += ','
-    ligne.c.forEach(cellule => {
-        try{var valeur = cellule.f ? cellule.f : cellule.v}
-        catch(e){var valeur = ''}
-        s += ',' + valeur + ','
-      }
-    )
-    s += ','
-    }
-  )
-  s += ','
-  //////////////////////////////////////////
-  while(s.indexOf(',,') >= 0) s = s.trim().split(',,').join(',');
-  if(s.charAt(0) == ',') s = s.substring(1);
-  if(s.charAt(s.length-1) == ',') s = s.substring(0, s.length-1);
+setTimeout(repeatingFetch, 30000);
+ 
+function getChatterList(jsonStr){
+	jsonStr = jsonStr.trim().substring(6);
+	jsonStr = jsonStr.substring(0, jsonStr.length-1);
+	var json =  JSON.parse(jsonStr);
+	var ary = new Array(7);
+	ary[0] = json.chatters.broadcaster;
+	ary[1] = json.chatters.vips;
+	ary[2] = json.chatters.moderators;
+	ary[3] = json.chatters.staff;
+	ary[4] = json.chatters.admins;
+	ary[5] = json.chatters.global_mods;
+	ary[6] = json.chatters.viewers;
 
-  //lazy: skip 0-8 cells in ary 
-  var ary = s.split(',');
-  for(var i=0; i < 9; i++)
-	ary[i] = "";
-  s = ary.join(',');
-  s = s.split(',S Vips,').join(',');
-  s = s.split(',S Moderators,').join(',');
-  s = s.split(',S Staff,').join(',');
-  s = s.split(',S Admins,').join(',');
-  s = s.split(',S Global Mods,').join(',');
-  s = s.split(',S Viewers,').join(',');
-  s = s.split(',null,').join(',');
-  s = s.split(',null').join(',');
-  s = s.split('null,').join(',');
-  
-  while(s.indexOf(',,') >= 0) s = s.trim().split(',,').join(',');
-  if(s.charAt(0) == ',') s = s.substring(1);
-  if(s.charAt(s.length-1) == ',') s = s.substring(0, s.length-1);
-  return s;
+	var lst = "";
+	for(var i=0; i < ary.length; i++) {
+		for(var j=0; j < ary[i].length; j++) {
+			lst += (','+ ary[i][j]);
+		}
+	}
+	if(lst!="") lst = lst.substring(1);
+	return lst;  
 }
 //-->
 </script>
