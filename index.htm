@@ -156,11 +156,9 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
 		ctx.shadowColor = "black";
 		ctx.shadowBlur = 3;
 		ctx.fillStyle = "white";
-		var textOffset = (chibis[i].label.length>9 ? chibis[i].label.length*2 : 0);
-		textOffset = (chibis[i].label.length<5 ? -1*chibis[i].label.length : textOffset);
-		ctx.textAlign = "center";
+		ctx.textAlign = "center"; //align text middle
 		ctx.fillText(	chibis[i].label, 
-						chibis[i].pos.x - textOffset, //stay middle
+						chibis[i].pos.x + width/2, 
 						chibis[i].pos.y - textHeight +7); //on top
 
 
