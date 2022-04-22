@@ -78,8 +78,13 @@ let currentDirection = 0;
 var pTime = 0, mTime = 0, x = 0;
 var ctx = myCanvas.getContext("2d");
 
-var userList = "broadcaster,streamer,admin,staff,mod,vip,chat,viewer,user" +
-			   ",peter,john,may,paul,david,may,jane,yuki,mandy,mary,stephen,coco,nacy,apple,orange,hello,xmas"; 
+var userList = "broadcaster,streamer,admin,staff,mod,vip,chat,viewer,user,peter,john,may,paul,david,may,jane,yuki,mandy,mary,stephen,coco,nacy,apple,orange,hello,xmas"; 
+if(params.max) {
+	userList = "";
+	params.max *= 1;
+	params.max = (params.max > 70 ? 70 : params.max); //limited noum of sprite(so far)
+	for(var i=0; i < 1*params.max; i++) userList += ',';
+}
 var twUsers = userList.split(",");
 var chibis = new Array(twUsers.length); //num of characters
 
@@ -153,6 +158,7 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
 		ctx.fillStyle = "white";
 		var textOffset = (chibis[i].label.length>9 ? chibis[i].label.length*2 : 0);
 		textOffset = (chibis[i].label.length<5 ? -1*chibis[i].label.length : textOffset);
+		ctx.textAlign = "center";
 		ctx.fillText(	chibis[i].label, 
 						chibis[i].pos.x - textOffset, //stay middle
 						chibis[i].pos.y - textHeight +7); //on top
@@ -374,25 +380,28 @@ function FpsCtrl(fps, callback) {
 var twChName = "hihibbq";
 if(params.ch && params.ch != "") twChName = params.ch;
 var url = "https://tmi.twitch.tv/group/user/"+ twChName +"/chatters";
-url = "https://json2jsonp.com/?url="+ encodeURIComponent(url)+"&callback=chatters";
+url = "https://json2jsonp.com/?url="+ encodeURIComponent(url)+"&callback=getChatters";
 fetch(url)
   .then(response => response.text())
-  .then(data => document.getElementById("jsontbl").innerHTML = getChatterList(data)  
+  .then(data => document.getElementById("jsontbl").innerHTML = getChatters(data)  
   );
   
 function repeatingFetch() {
 	fetch(url)
 	  .then(response => response.text())
-	  .then(data => document.getElementById("jsontbl").innerHTML = getChatterList(data)
+	  .then(data => document.getElementById("jsontbl").innerHTML = getChatters(data)
 	  );
-	setTimeout(repeatingFetch, 60000);
+	setTimeout(repeatingFetch, 60000); //1 minute
 }
-setTimeout(repeatingFetch, 60000);
+setTimeout(repeatingFetch, 60000); //1 minute
  
-function getChatterList(jsonStr){
-	jsonStr = jsonStr.trim().substring(6);
-	jsonStr = jsonStr.substring(0, jsonStr.length-1);
-	var json =  JSON.parse(jsonStr);
+function getChatters(json){
+	if(json==null) return(".");
+	
+	json = json.substring(json.indexOf('({')+1);
+	json = json.substring(0, json.lastIndexOf(')'));
+	json = JSON.parse(json);
+	
 	var ary = new Array(7);
 	ary[0] = json.chatters.broadcaster;
 	ary[1] = json.chatters.vips;
@@ -404,7 +413,7 @@ function getChatterList(jsonStr){
 
 	var lst = "";
 	for(var i=0; i < ary.length; i++) {
-		for(var j=0; j < ary[i].length; j++) {
+		for(var j=0; ary && j < ary[i].length; j++) {
 			lst += (','+ ary[i][j]);
 		}
 	}
