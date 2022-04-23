@@ -374,10 +374,12 @@ function FpsCtrl(fps, callback) {
 
 //====================================================
 //List of twitch chat user names
+var rnd = Math.round(Math.random()*10000);
+if(rnd < 0) rnd = 0;
 
 var twChName = "hihibbq";
 if(params.ch && params.ch != "") twChName = params.ch;
-var url = "https://tmi.twitch.tv/group/user/"+ twChName +"/chatters";
+var url = "https://tmi.twitch.tv/group/user/"+ twChName +"/chatters?"+ rnd;
 url = "https://json2jsonp.com/?url="+ encodeURIComponent(url)+"&callback=getChatters";
 fetch(url)
   .then(response => response.text())
