@@ -390,6 +390,9 @@ fetch(url)
   );
   
 function repeatingFetch() {
+	var rnd = Math.round(Math.random()*10000);
+	if(rnd < 0) rnd = 0;
+	var url = "https://tmi.twitch.tv/group/user/"+ twChName +"/chatters?"+ rnd;
 	fetch(url)
 	  .then(response => response.text())
 	  .then(data => document.getElementById("jsontbl").innerHTML = getChatters(data)
