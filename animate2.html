@@ -429,15 +429,22 @@ fetch(url)
   .then(data => getChineseUserList(data)  
   );
 
+var listChineseUser = ",";
+var dictUsers = {};
 function getChineseUserList(json) {
-	//47 //  /*O_o*/ google.visualization.Query.setResponse(
-
 	json+=""; json = json.trim();
 	json = json.substring(47, json.length-2);
-	
 	json = JSON.parse(json);
 	
-	document.write(JSON.stringify(json.table.rows[0].c[0].v));
+	for(var i=0; i < json.table.rows.length; i++) {
+		var engName = json.table.rows[i].c[0].v.trim();
+		var chiName = json.table.rows[i].c[1].v.trim();
+		if(engName=="" || engName.length<1) continue;
+		if(listChineseUser.indexOf(engName) < 0) {
+			eval("dictUsers."+ engName +'="'+ chiName +'";');
+			listChineseUser += ","+engName;
+		}
+	}
 }
 
 
