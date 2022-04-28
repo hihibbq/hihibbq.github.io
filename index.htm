@@ -152,6 +152,10 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
 
 		//draw label(name)
 		if(chibis[i].label==null || chibis[i].label=="") continue;
+		
+		if(listChineseUser.indexOf(','+ chibis[i].label +',')>=0)
+			chibis[i].label = eval('dictUsers.'+chibis[i].label);
+		
 		ctx.font = "10px  Comic Sans MS";
 		ctx.shadowColor = "black";
 		ctx.shadowBlur = 3;
@@ -376,7 +380,6 @@ function FpsCtrl(fps, callback) {
 //List of twitch chat user names
 var rnd = Math.round(Math.random()*10000);
 if(rnd < 0) rnd = 0;
-
 var twChName = "hihibbq";
 if(params.ch && params.ch != "") twChName = params.ch;
 var url = "https://tmi.twitch.tv/group/user/"+ twChName +"/chatters?"+ rnd;
@@ -394,7 +397,7 @@ function repeatingFetch() {
 	setTimeout(repeatingFetch, 60000); //1 minute
 }
 setTimeout(repeatingFetch, 60000); //1 minute
- 
+
 function getChatters(json){
 	if(json==null) return(".");
 	
@@ -420,6 +423,41 @@ function getChatters(json){
 	if(lst!="") lst = lst.substring(1);
 	return lst;  
 }
+
+//list of chinese user names
+var id = '1BrlwpJDJfINkfh_akFqs6XG6XrwEh0vp264QYGrcrmY';
+var gid = '632849283';
+var url = 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json&tq&gid='+gid;
+
+fetch(url)
+  .then(response => response.text())
+  .then(data => getChineseUserList(data)  
+  );
+
+var listChineseUser = ",";
+var dictUsers = {};
+function getChineseUserList(json) {
+	json+=""; json = json.trim();
+	json = json.substring(47, json.length-2);
+	json = JSON.parse(json);
+	
+	for(var i=0; i < json.table.rows.length; i++) {
+		var engName = json.table.rows[i].c[0].v.trim();
+		var chiName = json.table.rows[i].c[1].v.trim();
+		if(engName=="" || engName.length<1) continue;
+		if(listChineseUser.indexOf(engName) < 0) {
+			eval('dictUsers.'+ engName +'="'+ chiName +'";');
+			listChineseUser += ","+engName;
+		}
+	}
+}
+
+
+//list of ignored user names
+id = '1BrlwpJDJfINkfh_akFqs6XG6XrwEh0vp264QYGrcrmY';
+gid = '1047332254';
+url = 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json&tq&gid='+gid;
+  
 //-->
 </script>
 
