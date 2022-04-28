@@ -426,11 +426,19 @@ var url = 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json&tq
 
 fetch(url)
   .then(response => response.text())
-  .then(data => alert(data)  
+  .then(data => getChineseUserList(data)  
   );
 
-//list of ignored user names
+function getChineseUserList(json) {
+	//guess:  {table:{rows:[{c:[v:"", v""]]
+	alert(json.table.rows)
+}
 
+
+//list of ignored user names
+id = '1BrlwpJDJfINkfh_akFqs6XG6XrwEh0vp264QYGrcrmY';
+gid = '1047332254';
+url = 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json&tq&gid='+gid;
   
 //-->
 </script>
