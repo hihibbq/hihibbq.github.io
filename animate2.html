@@ -152,6 +152,10 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
 
 		//draw label(name)
 		if(chibis[i].label==null || chibis[i].label=="") continue;
+		
+		if(listChineseUser.indexOf(','+ chibis[i].label +',')>=0)
+			chibis[i].label = eval('dictUsers.'+chibis[i].label);
+		
 		ctx.font = "10px  Comic Sans MS";
 		ctx.shadowColor = "black";
 		ctx.shadowBlur = 3;
@@ -441,7 +445,7 @@ function getChineseUserList(json) {
 		var chiName = json.table.rows[i].c[1].v.trim();
 		if(engName=="" || engName.length<1) continue;
 		if(listChineseUser.indexOf(engName) < 0) {
-			eval("dictUsers."+ engName +'="'+ chiName +'";');
+			eval('dictUsers.'+ engName +'="'+ chiName +'";');
 			listChineseUser += ","+engName;
 		}
 	}
