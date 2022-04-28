@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Random Generator</title>
+<title>GUI</title>
 <style>
 td {font-family: Arial;}
 </style>
-<script type="text/javascript" src="files.js"></script>
 </head>
 <body>
 
@@ -237,156 +236,8 @@ td {font-family: Arial;}
 </tr>
 </table>
 
-<br>
-
-<div style='position:absolute;'><img id='img1'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
-<div style='position:absolute;'><img id='img2'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
-<div style='position:absolute;'><img id='img3'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
-<div style='position:absolute;'><img id='img4'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
-<div style='position:absolute;'><img id='img5'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
-<div style='position:absolute;'><img id='img6'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
-<div style='position:absolute;'><img id='img7'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
-<div style='position:absolute;'><img id='img8'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
-<div style='position:absolute;'><img id='img9'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
-<div style='position:absolute;'><img id='img10' src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
-
-<br><br><br><br><br><br><br><br>
-<hr>
-<img id='debugImg1' src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'>
-<img id='debugImg2' src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'>
-<img id='debugImg3' src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'>
-<img id='debugImg4' src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'>
-<img id='debugImg5' src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'>
-<img id='debugImg6' src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'>
-<img id='debugImg7' src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'>
-<img id='debugImg8' src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'>
-<img id='debugImg9' src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'>
-<img id='debugImg10' src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'>
-
-
 <script language="JavaScript">
 <!--
-//populate the dropdown list dynamically
-a = a.slice(1); //skip 1st elem
-for(var i=0; i < a.length; i++) 
-	a[i] = a[i].split('|');
-
-const FLDR=0, SEX=1, PNG=2; //syntatic sugar
-for(var i=0; i < a.length; i++) {
-	var theSelId = a[i][FLDR];
-	theSelId = theSelId.split('-').join(''); //if any
-	theSelId = theSelId.charAt(0).toUpperCase() + theSelId.substring(1);
-	var theSel = null;
-	
-	if(a[i][SEX] == 'male') {
-		theSel = document.getElementById('sel'+ theSelId +'M');
-		var theOpt = document.createElement("option");
-		theOpt.text = a[i][PNG].split('.png').join('');
-		theOpt.value = a[i][FLDR] +'/'+ a[i][SEX] +'/'+ a[i][PNG];
-		theSel.appendChild(theOpt);
-	}
-	else if(a[i][SEX] == 'female') {
-		theSel = document.getElementById('sel'+ theSelId +'F');
-		var theOpt = document.createElement("option");
-		theOpt.text = a[i][PNG].split('.png').join('');
-		theOpt.value = a[i][FLDR] +'/'+ a[i][SEX] +'/'+ a[i][PNG];
-		theSel.appendChild(theOpt);
-	}
-
-	else { //unissex
-		theSel = document.getElementById('sel'+ theSelId +'M');
-		var theOpt = document.createElement("option");
-		theOpt.text = a[i][PNG].split('.png').join('');
-		theOpt.value = a[i][FLDR] +'/'+ a[i][SEX] +'/'+ a[i][PNG];
-		theSel.appendChild(theOpt);
-
-		theSel = document.getElementById('sel'+ theSelId +'F');
-		var theOpt = document.createElement("option");
-		theOpt.text = a[i][PNG].split('.png').join('');
-		theOpt.value = a[i][FLDR] +'/'+ a[i][SEX] +'/'+ a[i][PNG];
-		theSel.appendChild(theOpt);
-	}	
-	
-}
-
-const imgpath = 'https://hihibbq.github.io/frontend/assets/images/creator/';
-
-//config the dropdown list
-selBaseM.onchange 			= function(){document.getElementById('img1').src = imgpath + this.value; document.getElementById('debugImg1').src = imgpath + this.value;};
-selBodyM.onchange 			= function(){document.getElementById('img2').src = imgpath + this.value; document.getElementById('debugImg2').src = imgpath + this.value;};
-selHairM.onchange 			= function(){document.getElementById('img3').src = imgpath + this.value; document.getElementById('debugImg3').src = imgpath + this.value;};
-selHairfrontM.onchange 		= function(){document.getElementById('img4').src = imgpath + this.value; document.getElementById('debugImg4').src = imgpath + this.value;};
-selHairbackM.onchange 		= function(){document.getElementById('img5').src = imgpath + this.value; document.getElementById('debugImg5').src = imgpath + this.value;};
-selHeadaccessoryM.onchange 	= function(){document.getElementById('img6').src = imgpath + this.value; document.getElementById('debugImg6').src = imgpath + this.value;};
-selMantleM.onchange 		= function(){document.getElementById('img7').src = imgpath + this.value; document.getElementById('debugImg7').src = imgpath + this.value;};
-selWingM.onchange 			= function(){document.getElementById('img8').src = imgpath + this.value; document.getElementById('debugImg8').src = imgpath + this.value;};
-selArmorM.onchange 			= function(){document.getElementById('img9').src = imgpath + this.value; document.getElementById('debugImg9').src = imgpath + this.value;};
-selAccessoryM.onchange 		= function(){document.getElementById('img10').src= imgpath + this.value; document.getElementById('debugImg10').src= imgpath + this.value;};
-//female
-selBaseF.onchange 			= function(){document.getElementById('img1').src = imgpath + this.value; document.getElementById('debugImg1').src = imgpath + this.value;};
-selBodyF.onchange 			= function(){document.getElementById('img2').src = imgpath + this.value; document.getElementById('debugImg2').src = imgpath + this.value;};
-selHairF.onchange 			= function(){document.getElementById('img3').src = imgpath + this.value; document.getElementById('debugImg3').src = imgpath + this.value;};
-selHairfrontF.onchange 		= function(){document.getElementById('img4').src = imgpath + this.value; document.getElementById('debugImg4').src = imgpath + this.value;};
-selHairbackF.onchange 		= function(){document.getElementById('img5').src = imgpath + this.value; document.getElementById('debugImg5').src = imgpath + this.value;};
-selHeadaccessoryF.onchange 	= function(){document.getElementById('img6').src = imgpath + this.value; document.getElementById('debugImg6').src = imgpath + this.value;};
-selMantleF.onchange 		= function(){document.getElementById('img7').src = imgpath + this.value; document.getElementById('debugImg7').src = imgpath + this.value;};
-selWingF.onchange 			= function(){document.getElementById('img8').src = imgpath + this.value; document.getElementById('debugImg8').src = imgpath + this.value;};
-selArmorF.onchange 			= function(){document.getElementById('img9').src = imgpath + this.value; document.getElementById('debugImg9').src = imgpath + this.value;};
-selAccessoryF.onchange 		= function(){document.getElementById('img10').src= imgpath + this.value; document.getElementById('debugImg10').src= imgpath + this.value;};
-
-function getToggleSex() {
-	var selSex = document.getElementById('selSex');
-	if(selSex.options[0].selected)
-		selSex.options[1].selected = true;
-	else
-		selSex.options[0].selected = true;
-}
-
-function getRandomSex() {
-	var selSex = document.getElementById('selSex');
-	var rnd = Math.floor(Math.random()*2) % 2;
-	selSex.options[rnd].selected = true;
-}
-
-function getRandomOption(theSel) {
-	var selSex = document.getElementById('selSex');
-	if(selSex.options[0].selected) { //male
-		var len = theSel.options.length;
-		var rnd = Math.floor(Math.random() * len);
-		theSel.options[rnd].selected = true;
-		theSel.onchange();
-	}
-	else { //female
-		var theSelId = theSel.id;
-		theSelId = theSelId.substring(0, theSelId.length-1) + 'F';
-		theSel = document.getElementById(theSelId);
-		var len = theSel.options.length;
-		var rnd = Math.floor(Math.random() * len);
-		theSel.options[rnd].selected = true;
-		theSel.onchange();
-	}
-
-}
-
-//config the buttons
-rndBase.onclick 			= function(){getRandomOption( selBaseM )};
-rndBody.onclick 			= function(){getRandomOption( selBodyM )};
-rndHair.onclick 			= function(){getRandomOption( selHairM )};
-rndHairfront.onclick 		= function(){getRandomOption( selHairfrontM )};
-rndHairback.onclick 		= function(){getRandomOption( selHairbackM )};
-rndHeadaccessory.onclick 	= function(){getRandomOption( selHeadaccessoryM )};
-rndMantle.onclick 			= function(){getRandomOption( selMantleM )};
-rndWing.onclick 			= function(){getRandomOption( selWingM )};
-rndArmor.onclick 			= function(){getRandomOption( selArmorM )};
-rndAccessory.onclick 		= function(){getRandomOption( selAccessoryM )};
-
-function randomAll() {
-	getRandomSex();
-	var btns = [ rndBase, rndBody, rndHair, rndHairfront, rndHairback, 
-				 rndHeadaccessory, rndMantle, rndWing, rndArmor, rndAccessory ];
-	for(var i=0; i < btns.length; i++)
-		btns[i].click();
-}
 //-->
 </script>
 
