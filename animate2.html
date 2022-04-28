@@ -437,7 +437,7 @@ function getChineseUserList(json) {
 	
 	json = JSON.parse(json);
 	
-	document.write(json.table.rows[0]);
+	document.write(JSON.stringify(json.table.rows[0]));
 }
 
 
