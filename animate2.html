@@ -392,7 +392,7 @@ function repeatingFetch() {
 	setTimeout(repeatingFetch, 60000); //1 minute
 }
 setTimeout(repeatingFetch, 60000); //1 minute
- 
+
 function getChatters(json){
 	if(json==null) return(".");
 	
@@ -430,8 +430,14 @@ fetch(url)
   );
 
 function getChineseUserList(json) {
-	//guess:  {table:{rows:[{c:[v:"", v""]]
-	document.write(json);
+	//47 //  /*O_o*/ google.visualization.Query.setResponse(
+
+	json+=""; json = json.trim();
+	json = json.substring(47, json.length-2);
+	
+	json = JSON.parse(json);
+	
+	document.write(json.table.rows[0]);
 }
 
 
