@@ -450,7 +450,7 @@ function getChineseUserList(json) {
 		if(engName=="" || engName.length<1) continue;
 		if(listChineseUser.indexOf(engName) < 0) {
 			eval('dictUsers.$'+ engName +'="'+ chiName +'";');
-			listChineseUser += ","+engName;
+			listChineseUser += engName+',';
 		}
 	}
 }
@@ -474,7 +474,7 @@ function getIgnoredUserList(json) {
 		var userName = json.table.rows[i].c[0].v.trim();
 		if(userName=="" || userName.length<1) continue;
 		if(listIgnoredUser.indexOf(userName) < 0) {
-			listIgnoredUser += ","+userName;
+			listIgnoredUser += userName+',';
 		}
 	}
 }  
