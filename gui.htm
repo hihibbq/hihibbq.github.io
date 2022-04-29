@@ -49,8 +49,16 @@ function go() {
 </td>
 <tr>
 	<td colspan=2>更新頻率：</td>
-	<td colspan=2><input id='txtMinute' type='text' size=3 value='1'>分鐘一次
-</td>
+	<td colspan=2>
+	<select id='selMinute'>
+		<option value=1>1</option>
+		<option value=5>5</option>
+		<option value=10>10</option>
+		<option value=10>15</option>
+		<option value=10>30</option>
+		<option value=10>60</option>
+	</select> 分鐘一次
+	</td>
 </tr>
 <tr>
 	<td><input type=button value=' GO ' onClick='JavaScript:go();'></td>
