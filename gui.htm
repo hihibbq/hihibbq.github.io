@@ -5,18 +5,32 @@
 <style>
 td {font-family: Arial;}
 </style>
+<script language='JavaScript'>
+<!--
+function go() {
+	var ch = document.getElementById('txtCh').value;
+	var bg = document.getElementById('selBg').value;
+	var w = document.getElementById('txtW').value;
+	var h = document.getElementById('txtH').value
+	var max = document.getElementById('txtMax').value;
+	
+	var url = 'hihibbq.github.io/?ch='+ ch +'&bg='+ bg +'&w='+ w +'&h='+ h +'&max='+ max;
+	location.href = url;
+}
+//-->
+</script>
 </head>
 <body>
 
 <table border=0>
 <tr>
 	<td colspan=2>Your Channel Id:</td>
-	<td colspan=2><input type='text'></td>
+	<td colspan=2><input id='txtCh' type='text'></td>
 </tr>
 <tr>
 	<td colspan=2>Background:</td>
 	<td colspan=2>
-	<select>
+	<select id='selBg'>
 		<option value=0>No Background</option>
 		<option value=1>Type 1</option>
 		<option value=2>Type 2</option>
@@ -25,14 +39,17 @@ td {font-family: Arial;}
 </tr>
 <tr>
 	<td>width:</td>
-	<td><input type='text' size=3></td>
+	<td><input  id='txtW' type='text' size=3></td>
 	<td>height:</td>
-	<td><input type='text' size=3></td>
+	<td><input id='txtH' type='text' size=3></td>
 </tr>
 <tr>
 	<td colspan=2>Max no. of characters:</td>
-	<td colspan=2><input type='text' size=3>
+	<td colspan=2><input id='txtMax' type='text' size=3>
 </td>
+</tr>
+<tr>
+	<td><button value=' GO ' onClick='JavaScript:go();'></td>
 </tr>
 </table>	
 	
