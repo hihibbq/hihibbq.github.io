@@ -1,0 +1,252 @@
+<html>
+<head>
+<title>chibis - DB</title>
+<style>
+table, tr, td {
+	border: 1px solid black;
+}
+tr:nth-child(even) {
+	background: #CCC
+}
+tr:nth-child(odd) {
+	background: #FFF
+}
+</style>
+<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase.js"></script>
+</head>
+<body>
+
+<div id='content' style='position:absolute;top:20px;left:20px;z-Index:999;'>
+	<span style='font-family:Helvetica;font-weight:14pt;'>Showing first 100 records:</span>
+	<br><br>
+	
+	Logging
+	<table id='tbl' cellspacing=5 cellpadding=5 style='border:1px solid black; border-collapse:collapse; font-family:Helvetica;font-size:9pt;'>
+	<tr style='font-weight:bold; font-size:12pt;'>
+		<td>UUID</td>
+		<td><nobr>Stream ID</nobr></td>
+		<td><nobr>Date/Time</nobr></td>
+	</tr>
+	</table>
+
+	<br><br>
+	
+	TTV Nickname Lookup
+	<table id='tbl2' cellspacing=5 cellpadding=5 style='border:1px solid black; border-collapse:collapse; font-family:Helvetica;font-size:9pt;'>
+	<tr style='font-weight:bold; font-size:12pt;'>
+		<td>UUID</td>
+		<td>TTV ID</td>
+		<td>Nickname</td>
+		<td><nobr>Date/Time</nobr></td>
+	</tr>
+	</table>
+	<br><br>
+	
+	Ignored Users
+	<table id='tbl3' cellspacing=5 cellpadding=5 style='border:1px solid black; border-collapse:collapse; font-family:Helvetica;font-size:9pt;'>
+	<tr style='font-weight:bold; font-size:12pt;'>
+		<td>UUID</td>
+		<td>Stream</td>
+		<td>Active</td>
+		<td><nobr>Date/Time</nobr></td>
+	</tr>
+	</table>
+
+	<br><br>
+	
+	Saved User Profile
+	<table id='tbl4' cellspacing=5 cellpadding=5 style='border:1px solid black; border-collapse:collapse; font-family:Helvetica;font-size:9pt;'>
+	<tr style='font-weight:bold; font-size:12pt;'>
+		<td>UUID</td>
+		<td>TTV ID</td>
+		<td>Background</td>
+		<td>Width</td>
+		<td>Height</td>
+		<td>Max</td>
+		<td><nobr>Refresh Every (min)</nobr></td>
+		<td><nobr>Date/Time</nobr></td>
+	</tr>
+	</table>
+
+	<br><br>
+	
+	Chibis Created by Users
+	<table id='tbl5' cellspacing=5 cellpadding=5 style='border:1px solid black; border-collapse:collapse; font-family:Helvetica;font-size:9pt;'>
+	<tr style='font-weight:bold; font-size:12pt;'>
+		<td>UUID</td>
+		<td>UUID</td>
+		<td>Position</td>
+		<td><nobr>IP Address</nobr></td>
+		<td>GPS</td>
+		<td>GPS</td>
+		<td><nobr>Date/Time</nobr></td>
+	</tr>
+	</table>
+
+	<br><br>
+	
+	User chose a fixed Chibi
+	<table id='tbl6' cellspacing=5 cellpadding=5 style='border:1px solid black; border-collapse:collapse; font-family:Helvetica;font-size:9pt;'>
+	<tr style='font-weight:bold; font-size:12pt;'>
+		<td>UUID</td>
+		<td>UUID</td>
+		<td>Position</td>
+		<td><nobr>Date/Time</nobr></td>
+	</tr>
+	</table>
+	
+	<br><br><br><br>
+</div>
+
+<br><br><br><br>
+
+<script language='JavaScript'>
+<!--
+//tables: createdchibis, ignoredusers, logging, nicknames, userchibi, userprofile
+var config = {
+    apiKey: "AIzaSyAvzfMg2MJNPjVqfEQ8ZR02AWa5Tt_6kAE",
+    authDomain: "chibis-12345.firebaseapp.com",
+    databaseURL: "https://chibis-12345-default-rtdb.firebaseio.com",
+    storageBucket: "chibis-12345.appspot.com",
+};
+firebase.initializeApp(config);
+
+firebase.database().ref('logging').on('value',(snap)=>{
+	//read the count (for pagination if needed)
+    var totalRecord =  snap.numChildren();
+    //alert("Total Record : "+totalRecord);
+  });
+
+//===================================================
+var r = 1;
+ firebase.database().ref('logging').once('value', function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+		var childKey = childSnapshot.key;
+		var childData = childSnapshot.val();
+	
+		var tbl = document.getElementById('tbl');
+		var row = tbl.insertRow(r);
+		var cells = new Array(3);
+		for(var i=0; i < cells.length; i++) 
+			cells[i] = row.insertCell(i);
+	
+		cells[0].innerHTML = '<nobr>'+childKey+'</nobr>';
+		cells[1].innerHTML = childData.stream;
+		cells[2].innerHTML = childData.lastupdate;
+		r ++;
+    });
+  });
+  
+
+var r2 = 1;
+ firebase.database().ref('nicknames').once('value', function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+		var childKey = childSnapshot.key;
+		var childData = childSnapshot.val();
+	
+		var tbl = document.getElementById('tbl2');
+		var row = tbl.insertRow(r2);
+		var cells = new Array(4);
+		for(var i=0; i < cells.length; i++) 
+			cells[i] = row.insertCell(i);
+	
+		cells[0].innerHTML = '<nobr>'+childKey+'</nobr>';
+		cells[1].innerHTML = childData.ttvid;
+		cells[2].innerHTML = childData.nickname;
+		cells[3].innerHTML = childData.lastupdate;
+		r2 ++;
+    });
+  });
+  
+var r3 = 1;
+ firebase.database().ref('ignoredusers').once('value', function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+		var childKey = childSnapshot.key;
+		var childData = childSnapshot.val();
+	
+		var tbl = document.getElementById('tbl3');
+		var row = tbl.insertRow(r3);
+		var cells = new Array(4);
+		for(var i=0; i < cells.length; i++) 
+			cells[i] = row.insertCell(i);
+	
+		cells[0].innerHTML = '<nobr>'+childKey+'</nobr>';
+		cells[1].innerHTML = childData.stream;
+		cells[2].innerHTML = childData.active;
+		cells[3].innerHTML = childData.lastupdate;
+		r3 ++;
+    });
+  });
+  
+var r4 = 1;
+ firebase.database().ref('userprofile').once('value', function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+		var childKey = childSnapshot.key;
+		var childData = childSnapshot.val();
+	
+		var tbl = document.getElementById('tbl4');
+		var row = tbl.insertRow(r4);
+		var cells = new Array(8);
+		for(var i=0; i < cells.length; i++) 
+			cells[i] = row.insertCell(i);
+	
+		cells[0].innerHTML = '<nobr>'+childKey+'</nobr>';
+		cells[1].innerHTML = childData.ttvid;
+		cells[2].innerHTML = childData.background;
+		cells[3].innerHTML = childData.width;
+		cells[4].innerHTML = childData.height;
+		cells[5].innerHTML = childData.max;
+		cells[6].innerHTML = childData.freq;
+		cells[7].innerHTML = childData.lastupdate;
+		r4 ++;
+    });
+  });
+  
+var r5 = 1;
+ firebase.database().ref('createdchibis').once('value', function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+		var childKey = childSnapshot.key;
+		var childData = childSnapshot.val();
+	
+		var tbl = document.getElementById('tbl5');
+		var row = tbl.insertRow(r5);
+		var cells = new Array(7);
+		for(var i=0; i < cells.length; i++) 
+			cells[i] = row.insertCell(i);
+	
+		cells[0].innerHTML = '<nobr>'+childKey+'</nobr>';
+		cells[1].innerHTML = childData.chibi_id;
+		cells[2].innerHTML = childData.settings;
+		cells[3].innerHTML = childData.imgdata;
+		cells[4].innerHTML = childData.liked;
+		cells[5].innerHTML = childData.rating;
+		cells[6].innerHTML = childData.lastupdate;
+		r5 ++;
+    });
+  });
+  
+var r6 = 1;
+ firebase.database().ref('userchibi').once('value', function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+		var childKey = childSnapshot.key;
+		var childData = childSnapshot.val();
+	
+		var tbl = document.getElementById('tbl6');
+		var row = tbl.insertRow(r6);
+		var cells = new Array(4);
+		for(var i=0; i < cells.length; i++) 
+			cells[i] = row.insertCell(i);
+	
+		cells[0].innerHTML = '<nobr>'+childKey+'</nobr>';
+		cells[1].innerHTML = childData.ttvid;
+		cells[2].innerHTML = childData.chibi_id;
+		cells[3].innerHTML = childData.lastupdate;
+		r6 ++;
+    });
+  });
+  
+//-->
+</script>
+
+</body>
+</html>
