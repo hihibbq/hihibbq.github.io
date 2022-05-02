@@ -3,9 +3,10 @@
 ====================================================
 	TO-DO:
 ====================================================
-see how to make use of:
-   nightbot/moobot cmd -> touch my json RESTful
+nightbot/moobot cmd -> touch AppScript -> db
 better middle align text (char-by-char)
+card mode?
+random generate map from tiles?
 ====================================================
 -->
 
@@ -135,6 +136,7 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
 					
 	for(var i=0; i < chibis.length; i++) {
 		if(!chibis[i].active || chibis[i].id < 0) continue;
+		if(listIgnoredUser.indexOf(chibis[i].label)>=0) continue;
 	
 		//draw character
 		if(chibis[i].move == MSG)
