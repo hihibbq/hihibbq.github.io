@@ -1,0 +1,28 @@
+<script>
+
+var key = 324293; //random integer
+var ciphertext = encdec(base64Encode("SOMETEXT"), key) ; 
+var plaintext  = base64Decode(encdec(ciphertext, key));
+  
+function encdec(str, key) {
+  var encrypted = "";
+  for (var i=0; i<str.length;i++) {
+    var a = str.charCodeAt(i);
+    var b = a ^ key;
+    encrypted = encrypted + String.fromCharCode(b);
+  }
+return encrypted;
+}
+
+function base64Encode(input) {
+  return Utilities.base64Encode(input,Utilities.Charset.UTF_8);
+}
+
+function base64Decode(input) {
+  return Utilities.newBlob(Utilities.base64Decode(input,Utilities.Charset.UTF_8)).getDataAsString();
+}
+
+// IDEA:
+// browser gen time (minute) -> gas -> bigprime/key -> smallkey
+  
+</script>
