@@ -1,7 +1,11 @@
 <html>
 <head>
-<title>chibis - DB</title>
+<title>chibis - Database</title>
 <style>
+body {
+	font-family: Helvetica;
+	font-weight: 14pt;
+}
 table, tr, td {
 	border: 1px solid black;
 }
@@ -13,13 +17,40 @@ tr:nth-child(odd) {
 }
 </style>
 <script src="https://www.gstatic.com/firebasejs/3.1.0/firebase.js"></script>
+<script language="JavaScript">
+function showTable() {
+	var theSel = document.getElementById('selDb');
+	for(var i=1; i <= theSel.options.length; i++) {
+		if(theSel.options[i-1].selected) {
+			//document.getElementById('div'+i).style.visibility = 'show';
+			document.getElementById('div'+i).style.display = '';
+		} else {
+			//document.getElementById('div'+i).style.visibility = 'hidden';
+			document.getElementById('div'+i).style.display = 'none';
+		}
+	}
+}
+</script>
 </head>
 <body>
 
 <div id='content' style='position:absolute;top:20px;left:20px;z-Index:999;'>
-	<span style='font-family:Helvetica;font-weight:14pt;'>Showing first 100 records:</span>
+	<span>Showing first 100 records:</span>
 	<br><br>
 	
+	Choose Database:
+	<select id='selDb' onChange='showTable();'>
+		<option value='1'>Logging</option>
+		<option value='2'>Twitch Nickname</option>
+		<option value='3'>Ignored Users</option>
+		<option value='4'>User Profile</option>
+		<option value='5'>Users Created Chibis</option>
+		<option value='6'>User's Custom Chibi</option>
+	</select>
+
+	<br><br>
+	
+	<div id='div1' style='display:block;'>
 	Logging
 	<table id='tbl' cellspacing=5 cellpadding=5 style='border:1px solid black; border-collapse:collapse; font-family:Helvetica;font-size:9pt;'>
 	<tr style='font-weight:bold; font-size:12pt;'>
@@ -28,20 +59,21 @@ tr:nth-child(odd) {
 		<td><nobr>Date/Time</nobr></td>
 	</tr>
 	</table>
+	</div>
 
-	<br><br>
-	
+	<div id='div2' style='display:none;'>
 	TTV Nickname Lookup
 	<table id='tbl2' cellspacing=5 cellpadding=5 style='border:1px solid black; border-collapse:collapse; font-family:Helvetica;font-size:9pt;'>
 	<tr style='font-weight:bold; font-size:12pt;'>
 		<td>UUID</td>
-		<td>TTV ID</td>
+		<td>Twitch ID</td>
 		<td>Nickname</td>
 		<td><nobr>Date/Time</nobr></td>
 	</tr>
 	</table>
-	<br><br>
+	</div>
 	
+	<div id='div3' style='display:none;'>
 	Ignored Users
 	<table id='tbl3' cellspacing=5 cellpadding=5 style='border:1px solid black; border-collapse:collapse; font-family:Helvetica;font-size:9pt;'>
 	<tr style='font-weight:bold; font-size:12pt;'>
@@ -51,14 +83,14 @@ tr:nth-child(odd) {
 		<td><nobr>Date/Time</nobr></td>
 	</tr>
 	</table>
-
-	<br><br>
+	</div>
 	
+	<div id='div4' style='display:none;'>
 	Saved User Profile
 	<table id='tbl4' cellspacing=5 cellpadding=5 style='border:1px solid black; border-collapse:collapse; font-family:Helvetica;font-size:9pt;'>
 	<tr style='font-weight:bold; font-size:12pt;'>
 		<td>UUID</td>
-		<td>TTV ID</td>
+		<td>Twitch ID</td>
 		<td>Background</td>
 		<td>Width</td>
 		<td>Height</td>
@@ -67,33 +99,34 @@ tr:nth-child(odd) {
 		<td><nobr>Date/Time</nobr></td>
 	</tr>
 	</table>
-
-	<br><br>
+	</div>
 	
+	<div id='div5' style='display:none;'>
 	Chibis Created by Users
 	<table id='tbl5' cellspacing=5 cellpadding=5 style='border:1px solid black; border-collapse:collapse; font-family:Helvetica;font-size:9pt;'>
 	<tr style='font-weight:bold; font-size:12pt;'>
 		<td>UUID</td>
-		<td>UUID</td>
-		<td>Position</td>
-		<td><nobr>IP Address</nobr></td>
-		<td>GPS</td>
-		<td>GPS</td>
+		<td>Chibi ID</td>
+		<td>Chibi Settings</td>
+		<td><nobr>Image Data</nobr></td>
+		<td>Liked</td>
+		<td>Rating</td>
 		<td><nobr>Date/Time</nobr></td>
 	</tr>
 	</table>
-
-	<br><br>
+	</div>
 	
+	<div id='div6' style='display:none;'>
 	User chose a fixed Chibi
 	<table id='tbl6' cellspacing=5 cellpadding=5 style='border:1px solid black; border-collapse:collapse; font-family:Helvetica;font-size:9pt;'>
 	<tr style='font-weight:bold; font-size:12pt;'>
 		<td>UUID</td>
-		<td>UUID</td>
-		<td>Position</td>
+		<td>Twitch ID</td>
+		<td>Chibi ID</td>
 		<td><nobr>Date/Time</nobr></td>
 	</tr>
 	</table>
+	</div>
 	
 	<br><br><br><br>
 </div>
