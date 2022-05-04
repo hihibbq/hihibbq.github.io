@@ -1,8 +1,19 @@
 <html>
 <head>
-<title>Firebase demo</title>
+<title>Add Ignored Users</title>
 </head>
 <body>
+
+Twitch ID: 
+<input type='text' size=5>	
+<br>
+To be ignored in this channel: 
+<input type='text' size=5>	
+<br><br>
+<input type='button' value='SUBMIT'>
+	
+<br><br>	
+	
 <h1>DB Updated!</h1>
 check firebase console in <a href='https://console.firebase.google.com/u/0/project/chibis-12345/database/chibis-12345-default-rtdb/data'>here</a>
 
@@ -10,7 +21,7 @@ check firebase console in <a href='https://console.firebase.google.com/u/0/proje
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.7.0/firebase-app.js'
   import { getDatabase, ref, set, get, child, push, update } 
-						   from 'https://www.gstatic.com/firebasejs/9.7.0/firebase-database.js'
+			   from 'https://www.gstatic.com/firebasejs/9.7.0/firebase-database.js'
 
   const config = {
     apiKey: "AIzaSyAvzfMg2MJNPjVqfEQ8ZR02AWa5Tt_6kAE",
@@ -24,69 +35,13 @@ check firebase console in <a href='https://console.firebase.google.com/u/0/proje
 
 function writeUserData() {
   const db = getDatabase();
-  var milliseconds = new Date().getTime();
-  set(ref(db, 'createdchibis/-' + milliseconds), {
-      "chibi_id": "$"+ milliseconds,
-      "imgdata": "base64:/xyz",
-      "settings": "head:1,body:1,clothes:1,accs:1,mantle:1,...", //to be expanded into fields
-      "liked": "0",
-      "rating": "5",
+  set(ref(db, 'ignoredusers/-' + 'someuser'), {
+      "stream": "*",
+      "active": true",
       "lastupdate": "2022-05-01 19:00:00",
   });
 }   
 writeUserData();
-
-function writeUserData4() {
-  const db = getDatabase();
-  var milliseconds = new Date().getTime();
-  set(ref(db, 'userchibi/-hihibbq'), {
-      "ttvid": "hihibbq",
-      "chibi_id": "$"+ milliseconds,
-      "lastupdate": "2022-05-01 19:00:00",
-  });
-}   
-
-
-function writeUserData3() {
-  const db = getDatabase();
-  var milliseconds = new Date().getTime();
-  set(ref(db, 'logging/-' + milliseconds), {
-      "stream": "hihibbq",
-      "lastupdate": "2022-05-01 19:00:00",
-  });
-}   
-   
-function writeUserData2(ttvid, nickname) {
-  const db = getDatabase();
-  set(ref(db, 'nicknames/' + "-"+ttvid.trim()), {
-      "ttvid": ttvid,
-      "nickname": nickname,
-      "lastupdate": "2022-05-01 19:00:00",
-  });
-}   
-//var s = "zaft_officer,扎多軍官;hihibbq,HiHiBBQ;colaevil,可樂魔;vip9430,陰性的哥士的;yyz_sinzzz,打不倒的空氣人;kazeko0602,湯川かぜこ;mh223,MH223;ebe1007,市民劉青蛙;fai222,有錢是真的能為所欲為;36yearsolduncle,38歲大叔;sai9gas,Sai9gas;colaevil,可樂魔;mokuncle,MokUncle;debugrockman,DebugRockman;hknirvana,番拿;mch2015,核心元素唯一鮭魚神作;dragonj_hk,ᄉᄉ台;pps2046,貓寶囝;uduki,Uduki;eivozero,EivoZERO;hero_ng,伍叔;kch124,小學學士;otakuchantszho,深呼吸辣椒仔;beebeeworld,殺人蜂";
-//s = s.trim().split(';');
-//for(var i=0; i < s.length; i++) {
-//	s[i] = s[i].trim().split(',');
-//	writeUserData2(s[i][0].trim() , s[i][1].trim());
-//}
-
-
-
-function readUserData() {
-	const dbRef = ref(getDatabase());
-	get(child(dbRef, `users/${userId}`)).then((snapshot) => {
-	if (snapshot.exists()) {
-	console.log(snapshot.val());
-	} else {
-	console.log("No data available");
-	}
-	}).catch((error) => {
-	console.error(error);
-	});
-}
-
-
 
 </script>
 </body>
