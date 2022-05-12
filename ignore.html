@@ -9,16 +9,17 @@ Twitch ID:
 <input type='text' name='u' size=10>	
 <br>
 To be ignored in this channel: 
-<input type='text' name='ch' size=10>	
+<input type='text' name='ch' size=10 value='*'> (default * is applying to all channels)	
 <br><br>
 <input type='submit' value=' SUBMIT '>
 </form>
 	
-<br><br>	
+<br><br>
 	
+<div id='divMsg' style='visibility:hidden;'>	
 <h1>DB Updated!</h1>
 check firebase console in <a href='https://console.firebase.google.com/u/0/project/chibis-12345/database/chibis-12345-default-rtdb/data'>here</a>
-
+</div>
 
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.7.0/firebase-app.js'
@@ -47,10 +48,10 @@ function getNowTimeStr() {
   return (''+ yyyy +'-'+ mm +'-'+ dd +' '+ hr +':'+ min +':'+ sec);
 }
 	
-function writeUserData() {
+function writeUserData(userId, streamerId) {
   const db = getDatabase();
-  set(ref(db, 'ignoredusers/-' + 'some_random_user'), {
-      "stream": "*",
+  set(ref(db, 'ignoredusers/-' + userId), {
+      "stream": streamerId,
       "active": true,
       "lastupdate": getNowTimeStr()
   });
@@ -62,8 +63,10 @@ if(pos >= 0) {
   params = params.trim().split('&');
   for(var i=0; i < params.length; i++)
     params[i] = params[i].trim().split('=');
-  //todo: more checkings...	
-  writeUserData();
+  if(params[0][0]=='u'  && params[1][0]=='ch') 
+    writeUserData(params[0][1], params[1][1]);
+  else if(params[0][0]=='ch' && params[1][0]=='u')
+    writeUserData(params[1][1], params[0][1]);
 }	
 
 </script>
