@@ -37,7 +37,7 @@ check firebase console in <a href='https://console.firebase.google.com/u/0/proje
 
 //format: 2022-05-01 19:00:00
 function getNowTimeStr() {
-  var curr = Date.now();
+  var curr = new Date();
   var yyyy = curr.getFullYear();
   var mm = 1+curr.getMonth();  mm = (mm>9?mm:'0'+mm);
   var dd = curr.getDate();     dd = (dd>9?dd:'0'+dd);
