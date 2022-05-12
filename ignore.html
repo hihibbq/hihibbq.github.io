@@ -63,10 +63,14 @@ if(pos >= 0) {
   params = params.trim().split('&');
   for(var i=0; i < params.length; i++)
     params[i] = params[i].trim().split('=');
-  if(params[0][0]=='u'  && params[1][0]=='ch') 
-    writeUserData(params[0][1], params[1][1]);
-  else if(params[0][0]=='ch' && params[1][0]=='u')
-    writeUserData(params[1][1], params[0][1]);
+  if(params.length >= 2) {
+    if(params[0][0]=='u'  && params[1][0]=='ch')
+      if(params[0][1] && params[0][1]!=null && params[0][1]!='' && params[0][1].length>0)
+        writeUserData(params[0][1], params[1][1]);
+    else if(params[0][0]=='ch' && params[1][0]=='u')
+      if(params[1][1] && params[1][1]!=null && params[1][1]!='' && params[1][1].length>0)
+        writeUserData(params[1][1], params[0][1]);
+  }
 }	
 
 </script>
