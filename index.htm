@@ -484,35 +484,8 @@ function getChatters(json){
 	return lst;  
 }
 
-//list of chinese user names
-var id, gid, url;
-id = '1BrlwpJDJfINkfh_akFqs6XG6XrwEh0vp264QYGrcrmY';
-gid = '632849283';
-url = 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json&tq&gid='+gid;
-fetch(url)
-  .then(response => response.text())
-  .then(data => getChineseUserList(data) );
-
-var listChineseUser = ",";
-var dictUsers = {};
-function getChineseUserList(json) {
-	json+=""; json = json.trim();
-	json = json.substring(47, json.length-2);
-	json = JSON.parse(json);
-	
-	for(var i=0; i < json.table.rows.length; i++) {
-		var engName = json.table.rows[i].c[0].v.trim();
-		var chiName = json.table.rows[i].c[1].v.trim();
-		if(engName=="" || engName.length<1) continue;
-		if(listChineseUser.indexOf(engName) < 0) {
-			eval('dictUsers.$'+ engName +'="'+ chiName +'";');
-			listChineseUser += engName+',';
-		}
-	}
-}
-
 //===================================================
-//list of ignored user names
+//list of chinese user nicknames
 var config = {
     apiKey: "AIzaSyAvzfMg2MJNPjVqfEQ8ZR02AWa5Tt_6kAE",
     authDomain: "chibis-12345.firebaseapp.com",
@@ -521,9 +494,54 @@ var config = {
 };
 firebase.initializeApp(config);
 
-firebase.database().ref('logging').on('value',(snap)=>{
-    var totalRecord =  snap.numChildren();
+var listChineseUser = ",";
+var dictUsers = {};
+firebase.database().ref('nicknames').once('value', function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+		var childKey = childSnapshot.key;
+		var childData = childSnapshot.val();
+		//childData.ttvid, childData.nickname, childData.lastupdate
+		var engName = childData.ttvid.trim();
+		var chiName = childData.nickname.trim();
+		if(engName=="" || engName.length<1) continue;
+		if(listChineseUser.indexOf(engName) < 0) {
+			eval('dictUsers.$'+ engName +'="'+ chiName +'";');
+			listChineseUser += engName+',';
+		}
+    });
   });
+
+//old gsx method below
+//var id, gid, url;
+//id = '1BrlwpJDJfINkfh_akFqs6XG6XrwEh0vp264QYGrcrmY';
+//gid = '632849283';
+//url = 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json&tq&gid='+gid;
+//fetch(url)
+//  .then(response => response.text())
+//  .then(data => getChineseUserList(data) );
+//
+//var listChineseUser = ",";
+//var dictUsers = {};
+//function getChineseUserList(json) {
+//	json+=""; json = json.trim();
+//	json = json.substring(47, json.length-2);
+//	json = JSON.parse(json);
+//	
+//	for(var i=0; i < json.table.rows.length; i++) {
+//		var engName = json.table.rows[i].c[0].v.trim();
+//		var chiName = json.table.rows[i].c[1].v.trim();
+//		if(engName=="" || engName.length<1) continue;
+//		if(listChineseUser.indexOf(engName) < 0) {
+//			eval('dictUsers.$'+ engName +'="'+ chiName +'";');
+//			listChineseUser += engName+',';
+//		}
+//	}
+//}
+
+//===================================================
+//list of ignored user names
+firebase.database().ref('logging').on('value',(snap)=>{
+    var totalRecord =  snap.numChildren(); });
 
 var listIgnoredUser = ",";
  firebase.database().ref('ignoredusers').once('value', function(snapshot) {
