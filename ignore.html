@@ -37,7 +37,7 @@ function writeUserData() {
   const db = getDatabase();
   set(ref(db, 'ignoredusers/-' + 'some_random_user'), {
       "stream": "*",
-      "active": true",
+      "active": true,
       "lastupdate": "2022-05-01 19:00:00"
   });
 }   
