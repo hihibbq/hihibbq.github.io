@@ -81,10 +81,7 @@ var pTime = 0, mTime = 0, x = 0;
 var ctx = myCanvas.getContext("2d");
 
 var userList = "broadcaster,streamer,admin,staff,mod,vip,chat,viewer,user,peter,john,may,paul,david,may,jane,yuki,mandy,mary,stephen,coco,nacy,apple,orange,hello,xmas"; 
-userList=''; 
-for(var n=0;n<99;n++) {
-	userList+=',';
-}
+userList=''; for(var n=0;n<70;n++) {userList+=',';} //not more than 70 for now. only 70 chibis available
 
 if(params.max && params.max!=null && params.max!="" && params.max.length>0) {
 	userList = "";
