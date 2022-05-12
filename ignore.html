@@ -10,7 +10,7 @@ Twitch ID:
 To be ignored in this channel: 
 <input type='text' size=5>	
 <br><br>
-<input type='button' value='SUBMIT'>
+<input type='button' value='SUBMIT' onClick="JavaScript:location.href='ignore.html';">
 	
 <br><br>	
 	
@@ -33,12 +33,24 @@ check firebase console in <a href='https://console.firebase.google.com/u/0/proje
   const app = initializeApp(config);
 
 
+//format: 2022-05-01 19:00:00
+function getNowTimeStr() {
+  var curr = Date.now();
+  var yyyy = curr.getFullYear();
+  var mm = 1+curr.getMonth();  mm = (mm>9?mm:'0'+mm);
+  var dd = curr.getDate();     dd = (dd>9?dd:'0'+dd);
+  var hr = curr.getHours();    hr = (hr>9?hr:'0'+hr);
+  var min = curr.getMinutes(); min = (min>9?min:'0'+min);
+  var sec = curr.getSeconds(); sec = (sec>9?sec:'0'+sec);
+  return (''+ yyyy +'-'+ mm +'-'+ dd +' '+ hr +':'+ min +':'+ sec);
+}
+	
 function writeUserData() {
   const db = getDatabase();
   set(ref(db, 'ignoredusers/-' + 'some_random_user'), {
       "stream": "*",
       "active": true,
-      "lastupdate": "2022-05-01 19:00:00"
+      "lastupdate": getNowTimeStr()
   });
 }   
 writeUserData();
