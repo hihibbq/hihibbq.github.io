@@ -31,6 +31,57 @@ name { color: white; text-shadow: 0 0 3px black; }
 <br><br>
 <div id="jsontbl">.</div>
 
+<!-- writing log -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.7.0/firebase-app.js'
+  import { getDatabase, ref, set, get, child, push, update } 
+			   from 'https://www.gstatic.com/firebasejs/9.7.0/firebase-database.js'
+
+  const config = {
+    apiKey: "AIzaSyAvzfMg2MJNPjVqfEQ8ZR02AWa5Tt_6kAE",
+    authDomain: "chibis-12345.firebaseapp.com",
+    databaseURL: "https://chibis-12345-default-rtdb.firebaseio.com",
+    projectId: "chibis-12345",
+    storageBucket: "chibis-12345.appspot.com",
+  };
+  const app = initializeApp(config);
+
+
+//format: 2022-05-01 19:00:00
+function getNowTimeStr() {
+  var curr = new Date();
+  var yyyy = curr.getFullYear();
+  var mm = 1+curr.getMonth();  mm = (mm>9?mm:'0'+mm);
+  var dd = curr.getDate();     dd = (dd>9?dd:'0'+dd);
+  var hr = curr.getHours();    hr = (hr>9?hr:'0'+hr);
+  var min = curr.getMinutes(); min = (min>9?min:'0'+min);
+  var sec = curr.getSeconds(); sec = (sec>9?sec:'0'+sec);
+  return (''+ yyyy +'-'+ mm +'-'+ dd +' '+ hr +':'+ min +':'+ sec);
+}
+	
+function writeUserData() {
+  var url = location.href;
+  var streamer = 'hihibbq';
+  var pos = -1;
+  if(url.indexOf('?ch=')>0) 
+	pos = url.indexOf('?ch=');
+  else if(url.indexOf('&ch=')>0) 
+	pos = url.indexOf('&ch=');
+  streamer = url.substring(pos+4).trim();
+  if(streamer.indexOf('&')>0)
+	streamer = streamer.split('&')[0].trim();
+
+  const db = getDatabase();
+  var milliseconds = new Date().getTime();
+  set(ref(db, 'logging/-' + milliseconds), {
+      "stream": streamer,
+      "lastupdate": getNowTimeStr()
+  });
+}   
+writeUserData();
+	
+</script>
+
 <script language="JavaScript">
 <!--
 //query sring parsing
