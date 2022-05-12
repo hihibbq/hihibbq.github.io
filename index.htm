@@ -503,10 +503,11 @@ firebase.database().ref('nicknames').once('value', function(snapshot) {
 		//childData.ttvid, childData.nickname, childData.lastupdate
 		var engName = childData.ttvid.trim();
 		var chiName = childData.nickname.trim();
-		if(engName=="" || engName.length<1) continue;
-		if(listChineseUser.indexOf(engName) < 0) {
-			eval('dictUsers.$'+ engName +'="'+ chiName +'";');
-			listChineseUser += engName+',';
+		if(engName && engName!="" && engName.length>0) {
+			if(listChineseUser.indexOf(engName) < 0) {
+				eval('dictUsers.$'+ engName +'="'+ chiName +'";');
+				listChineseUser += engName+',';
+			}
 		}
     });
   });
