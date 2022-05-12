@@ -80,11 +80,12 @@ var pTime = 0, mTime = 0, x = 0;
 var ctx = myCanvas.getContext("2d");
 
 var userList = "broadcaster,streamer,admin,staff,mod,vip,chat,viewer,user,peter,john,may,paul,david,may,jane,yuki,mandy,mary,stephen,coco,nacy,apple,orange,hello,xmas"; 
+for(var n=0;n<99;n++) userList += ',';
+
 if(params.max) {
 	userList = "";
 	params.max *= 1;
-	params.max = (params.max > 70 ? 70 : params.max); //limited noum of sprite(so far)
-	for(var i=0; i < 1*params.max; i++) userList += ',';
+	for(var i=0; i<params.max; i++) userList += ',';
 }
 var twUsers = userList.split(",");
 var chibis = new Array(twUsers.length); //num of characters
@@ -478,9 +479,9 @@ var listIgnoredUser = ",";
 		var childData = childSnapshot.val();
 		//childData.stream, childData.active, childData.lastupdate
 		var userName = childKey.trim();
-		if(userName=="" || userName.length<1) continue;
-		if(listIgnoredUser.indexOf(userName) < 0) {
-			listIgnoredUser += userName+',';
+		if(userName!="" && userName.length>0) {
+			if(listIgnoredUser.indexOf(userName) < 0) 
+				listIgnoredUser += userName+',';
 		}
     });
   });
