@@ -35,10 +35,10 @@ check firebase console in <a href='https://console.firebase.google.com/u/0/proje
 
 function writeUserData() {
   const db = getDatabase();
-  set(ref(db, 'ignoredusers/-' + 'someuser'), {
+  set(ref(db, 'ignoredusers/-' + 'some_random_user'), {
       "stream": "*",
       "active": true",
-      "lastupdate": "2022-05-01 19:00:00",
+      "lastupdate": "2022-05-01 19:00:00"
   });
 }   
 writeUserData();
