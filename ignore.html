@@ -54,8 +54,17 @@ function writeUserData() {
       "active": true,
       "lastupdate": getNowTimeStr()
   });
-}   
-writeUserData();
+}
+	
+var pos = location.href.indexOf('?');
+if(pos >= 0) {
+  var params = location.href.substring(pos+1);
+  params = params.trim().split('&');
+  for(var i=0; i < params.length; i++)
+    params[i] = params[i].trim().split('=');
+  //todo: more checkings...	
+  writeUserData();
+}	
 
 </script>
 </body>
