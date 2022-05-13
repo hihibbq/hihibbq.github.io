@@ -17,10 +17,11 @@ function doLookup() {
 }
  
 function getTwtichNickname(json){
-  //format: {"$hihibbq": "HiHiBBQ"}
+  // getTwtichNickname({"$hihibbq":"HiHiBBQ"});
   if(json==null) return(".");
-alert('json.$'+ttvid);
-alert(json);
+
+  json = json.replace('getTwtichNickname(', '').replace(');', '');
+  json = JSON.parse(json);
   var nick = eval('json.$'+ttvid).trim();
 
   var theForm = document.getElementById('frm');
