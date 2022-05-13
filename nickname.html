@@ -19,7 +19,7 @@ function doLookup() {
 function getTwtichNickname(json){
   //format: {"$hihibbq": "HiHiBBQ"}
   if(json==null) return(".");
-  var nick = eval('json.$'+ttvid).trim*();
+  var nick = eval('json.$'+ttvid).trim();
 
   var theForm = document.getElementById('frm');
   theForm.n.value = nick;	
