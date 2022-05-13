@@ -48,7 +48,7 @@ Nickname:
 	
 <br><br>
 	
-<div id='divMsg' style='visibility:hidden;'>	
+<div id='divMsg' style='display:none;'>	
 <h1>DB Updated!</h1>
 check firebase console in <a href='https://console.firebase.google.com/u/0/project/chibis-12345/database/chibis-12345-default-rtdb/data'>here</a>
 </div>
@@ -102,8 +102,9 @@ if(pos >= 0) {
     else if(params[0][0]=='n' && params[1][0]=='u')
       if(params[1][1] && params[1][1]!=null && params[1][1]!='' && params[1][1].length>0)
         writeUserData(params[1][1], params[0][1]);
-    document.getElementById('divMsg').style.visibility = 'show';
+    document.getElementById('divMsg').style.display = 'block';
   }
+  location.href = 'nickname.html';
 }	
 
 </script>
