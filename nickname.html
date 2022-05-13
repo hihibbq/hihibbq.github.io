@@ -82,7 +82,7 @@ function getNowTimeStr() {
 	
 function writeUserData(userId, streamerId) {
   const db = getDatabase();
-  set(ref(db, 'ignoredusers/-' + userId), {
+  set(ref(db, 'nicknames/-' + userId), {
       "stream": streamerId,
       "active": true,
       "lastupdate": getNowTimeStr()
