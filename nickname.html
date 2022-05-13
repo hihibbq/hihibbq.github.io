@@ -80,11 +80,11 @@ function getNowTimeStr() {
   return (''+ yyyy +'-'+ mm +'-'+ dd +' '+ hr +':'+ min +':'+ sec);
 }
 	
-function writeUserData(userId, streamerId) {
+function writeUserData(userId, nickname) {
   const db = getDatabase();
   set(ref(db, 'nicknames/-' + userId), {
-      "stream": streamerId,
-      "active": true,
+      "ttvid": userId,
+      "nickname": nickname,
       "lastupdate": getNowTimeStr()
   });
 }
