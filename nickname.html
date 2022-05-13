@@ -3,25 +3,28 @@
 <title>Setup User's Nickname</title>
 <script language="JavaScript">
 <!--
+var ttvid = '';
 function doLookup() {
   var theForm = document.getElementById('frm');
   if(theForm.u.value && theForm.u.value!="") {
-    
+  ttvid = theForm.u.value.trim();
+  var baseUrl = 'https://script.google.com/macros/s/AKfycbx6sxc1MlGDGrMen0EFiJVGnCJqEsUwjs3gCitENB3fhzB0GuRd7jKyU5pAP3w_d1yt-w/exec';
+  var url = baseUrl + '?id='+ ttvid +'&callback=getTwtichNickname';
+  fetch(url)
+    .then(response => response.text())
+    .then(data => getTwtichNickname(data) );
   }	
 }
-	
-var twChName = "hihibbq";
-if(params.ch && params.ch != "") twChName = params.ch;
-var url = "https://tmi.twitch.tv/group/user/"+ twChName +"/chatters?"+ rnd;
-url = "https://json2jsonp.com/?url="+ encodeURIComponent(url)+"&callback=getChatters";
-fetch(url)
-  .then(response => response.text())
-  .then(data => document.getElementById("jsontbl").innerHTML = getChatters(data)  
-  );
-  
-function getChatters(json){
-	if(json==null) return(".");
-		
+ 
+function getTwtichNickname(json){
+  //format: {"$hihibbq": "HiHiBBQ"}
+  if(json==null) return(".");
+  var nick = eval('json.$'+ttvid).trim*();
+
+  var theForm = document.getElementById('frm');
+  theForm.n.value = nick;	
+  return nick;			     
+}
 	
 //-->
 </script>
@@ -34,6 +37,7 @@ Twitch ID:
 <br><br>
 Nickname: 
 <input type='text' name='n' size=10 value=''> 
+&nbsp;&nbsp;
 <input type='button' value='Lookup' onClick="JavaScript:doLookup();";>
 <br><br>
 <input type='submit' value=' SUBMIT '>
