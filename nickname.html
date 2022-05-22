@@ -84,7 +84,7 @@ function writeUserData(userId, nickname) {
   const db = getDatabase();
   set(ref(db, 'nicknames/-' + userId), {
       "ttvid": userId,
-      "nickname": nickname,
+      "nickname": decodeURIComponent(nickname),
       "lastupdate": getNowTimeStr()
   });
 }
