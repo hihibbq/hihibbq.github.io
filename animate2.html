@@ -135,6 +135,8 @@ var ctx = myCanvas.getContext("2d");
 var userList = "broadcaster,streamer,admin,staff,mod,vip,chat,viewer,user,peter,john,may,paul,david,may,jane,yuki,mandy,mary,stephen,coco,nacy,apple,orange,hello,xmas"; 
 userList=''; for(var n=0;n<70;n++) {userList+=',';} //not more than 70 for now. only 70 chibis available
 
+var streamerList=0, modList=0, vipList=0;
+
 if(params.max && params.max!=null && params.max!="" && params.max.length>0) {
 	userList = "";
 	params.max *= 1;
@@ -149,6 +151,7 @@ for(var i=0; i < chibis.length; i++) {
 					"pos": {"x":-1 , "y":-1}, 
 					"move": null,
 					"label": twUsers[i],
+					"role": "",
 					"msg": "",
 					"img": null,
 					"active": true
@@ -215,6 +218,9 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
 		
 		ctx.font = "10px  Comic Sans MS";
 		ctx.shadowColor = "black";
+		if(streamerList.indexOf(','+chibis[i].label+',')>=0) ctx.shadowColor = 'red';
+		if(modList.indexOf(','+chibis[i].label+',')>=0) ctx.shadowColor = 'green';
+		if(vipList.indexOf(','+chibis[i].label+',')>=0) ctx.shadowColor = 'pink';
 		ctx.shadowBlur = 3;
 		ctx.fillStyle = "white";
 		ctx.textAlign = "center"; //align text middle
@@ -474,6 +480,18 @@ function getChatters(json){
 	ary[4] = json.chatters.admins;
 	ary[5] = json.chatters.global_mods;
 	ary[6] = json.chatters.viewers;
+
+	streamerList = ',';
+	for(var i=0; i < ary[0].length; i++) 
+		streamerList += ary[0][i]+',';
+
+	vipList = ',';
+	for(var i=0; i < ary[1].length; i++) 
+		vipList += ary[1][i]+',';
+
+	modList = ',';
+	for(var i=0; i < ary[2].length; i++) 
+		modList += ary[2][i]+',';
 
 	var lst = "";
 	for(var i=0; i < ary.length; i++) {
