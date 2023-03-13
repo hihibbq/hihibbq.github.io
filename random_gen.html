@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Random Generator</title>
+<style>
+td {font-family: Arial;}
+</style>
+<script type="text/javascript" src="files.js"></script>
+</head>
+<body>
+
+
+<table border=0>
+<tr>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	<td>Male</td>
+	<td>Female</td>
+	<td>&nbsp;</td>
+</tr>
+<tr>
+	<td>sex</td>
+	<td>
+		<input type='checkbox' CHECKED DISABLED>
+	</td>
+	<td>	
+		<select id='selSex'>
+			<option value='M'>male</option>
+			<option value='F'>female</option>
+		</select>
+	</td>
+	<td>&nbsp;</td>
+	<td>	
+		<input id='rndSex' type='button' value='random' onclick='getToggleSex();'>
+		<span id='lckSex' style="font-family:Segoe UI Symbol;cursor:pointer;">&#x1F513;</span>
+	</td>
+</tr>
+<tr>
+	<td>body</td>
+	<td>
+		<input type='checkbox' CHECKED DISABLED>
+	</td>
+	<td>	
+		<select style='width:120px;' id='selBaseM'>
+			<option value='blank.png'>-----------</option>
+		</select>
+	</td>
+	<td>	
+		<select style='width:120px;' id='selBaseF'>
+			<option value='blank.png'>-----------</option>
+		</select>
+	</td>
+	<td>	
+		<input id='rndBase' type='button' value='random'>
+		<span id='lckBase' style="font-family:Segoe UI Symbol;cursor:pointer;">&#x1F513;</span>
+	</td>
+</tr>
+<tr>
+	<td>clothes</td>
+	<td>
+		<input type='checkbox' CHECKED id='cbBody'>
+	</td>
+	<td>	
+		<select style='width:120px;' id='selBodyM'>
+			<option value='blank.png'>-----------</option>
+		</select>
+	</td>
+	<td>	
+		<select style='width:120px;' id='selBodyF'>
+			<option value='blank.png'>-----------</option>
+		</select>
+	</td>
+	<td>	
+		<input id='rndBody' type='button' value='random'>
+		<span id='lckBody' style="font-family:Segoe UI Symbol;cursor:pointer;">&#x1F513;</span>
+	</td>
+</tr>
+<tr>
+	<td>hair</td>
+	<td>
+		<input type='checkbox' CHECKED id='cbHair'>
+	</td>
+	<td>	
+		<select style='width:120px;' id='selHairM'>
+			<option value='blank.png'>-----------</option>
+		</select>
+	</td>
+	<td>	
+		<select style='width:120px;' id='selHairF'>
+			<option value='blank.png'>-----------</option>
+		</select>
+	</td>
+	<td>	
+		<input id='rndHair' type='button' value='random'>
+		<span id='lckHair' style="font-family:Segoe UI Symbol;cursor:pointer;">&#x1F513;</span>
+	</td>
+</tr>
+<tr>
+	<td>hair bang</td>
+	<td>
+		<input type='checkbox' CHECKED id='cbHairfront'>
+	</td>
+	<td>	
+		<select style='width:120px;' id='selHairfrontM'>
+			<option value='blank.png'>-----------</option>
+		</select>
+	</td>
+	<td>	
+		<select style='width:120px;' id='selHairfrontF'>
+			<option value='blank.png'>-----------</option>
+		</select>
+	</td>
+	<td>	
+		<input id='rndHairfront' type='button' value='random'>
+		<span id='lckHairfront' style="font-family:Segoe UI Symbol;cursor:pointer;">&#x1F513;</span>
+	</td>
+</tr>
+<tr>
+	<td>hair tail</td>
+	<td>
+		<input type='checkbox' CHECKED id='cbHairback'>
+	</td>
+	<td>	
+		<select style='width:120px;' id='selHairbackM'>
+			<option value='blank.png'>-----------</option>
+		</select>
+	</td>
+	<td>	
+		<select style='width:120px;' id='selHairbackF'>
+			<option value='blank.png'>-----------</option>
+		</select>
+	</td>
+	<td>	
+		<input id='rndHairback' type='button' value='random'>
+		<span id='lckHairback' style="font-family:Segoe UI Symbol;cursor:pointer;">&#x1F513;</span>
+	</td>
+</tr>
+<tr>
+	<td>head accessory
+	</td>
+	<td>
+		<input type='checkbox' CHECKED id='cbHeadaccessory'>
+	</td>
+	<td>	
+		<select style='width:120px;' id='selHeadaccessoryM'>
+			<option value='blank.png'>-----------</option>
+		</select>
+	</td>
+	<td>	
+		<select style='width:120px;' id='selHeadaccessoryF'>
+			<option value='blank.png'>-----------</option>
+		</select>
+	</td>
+	<td>	
+		<input id='rndHeadaccessory' type='button' value='random'>
+		<span id='lckHeadaccessory' style="font-family:Segoe UI Symbol;cursor:pointer;">&#x1F513;</span>
+	</td>
+</tr>
+<tr>
+	<td>mantle</td>
+	<td>
+		<input type='checkbox' CHECKED id='cbMantle'>
+	</td>
+	<td>	
+		<select style='width:120px;' id='selMantleM'>
+			<option value='blank.png'>-----------</option>
+		</select>
+	</td>
+	<td>	
+		<select style='width:120px;' id='selMantleF'>
+			<option value='blank.png'>-----------</option>
+		</select>
+	</td>
+	<td>	
+		<input id='rndMantle' type='button' value='random'>
+		<span id='lckMantle' style="font-family:Segoe UI Symbol;cursor:pointer;">&#x1F513;</span>
+	</td>
+</tr>
+<tr>
+	<td>wing</td>
+	<td>
+		<input type='checkbox' CHECKED id='cbWing'>
+	</td>
+	<td>	
+		<select style='width:120px;' id='selWingM'>
+			<option value='blank.png'>-----------</option>
+		</select>
+	</td>
+	<td>	
+		<select style='width:120px;' id='selWingF'>
+			<option value='blank.png'>-----------</option>
+		</select>
+	</td>
+	<td>	
+		<input id='rndWing' type='button' value='random'>
+		<span id='lckWing' style="font-family:Segoe UI Symbol;cursor:pointer;">&#x1F513;</span>
+	</td>
+</tr>
+<tr>
+	<td>armor</td>
+	<td>
+		<input type='checkbox' CHECKED id='cbArmor'>
+	</td>
+	<td>	
+		<select style='width:120px;' id='selArmorM'>
+			<option value='blank.png'>-----------</option>
+		</select>
+	</td>
+	<td>	
+		<select style='width:120px;' id='selArmorF'>
+			<option value='blank.png'>-----------</option>
+		</select>
+	</td>
+	<td>	
+		<input id='rndArmor' type='button' value='random'>
+		<span id='lckArmor' style="font-family:Segoe UI Symbol;cursor:pointer;">&#x1F513;</span>
+	</td>
+</tr>
+<tr>
+	<td>accessory</td>
+	<td>
+		<input type='checkbox' CHECKED id='cbAccessory'>
+	</td>
+	<td>	
+		<select style='width:120px;' id='selAccessoryM'>
+			<option value='blank.png'>-----------</option>
+		</select>
+	</td>
+	<td>	
+		<select style='width:120px;' id='selAccessoryF'>
+			<option value='blank.png'>-----------</option>
+		</select>
+	</td>
+	<td>	
+		<input id='rndAccessory' type='button' value='random'>
+		<span id='lckAccessory' style="font-family:Segoe UI Symbol;cursor:pointer;">&#x1F513;</span>
+	</td>
+</tr>
+<tr>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	<td>
+		<br>
+		<input style='width:110px;' type='button' value='RANDOM ALL' onClick="randomAll();">
+	</td>
+	<td>
+		<br>
+		<input style='width:110px;' type='button' value='RESET ALL' onClick="resetAll();">
+	</td>
+	<td>&nbsp;</td>
+</tr>
+</table>
+
+<br>
+
+<div style='position:absolute;'><img id='img1'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
+<div style='position:absolute;'><img id='img2'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
+<div style='position:absolute;'><img id='img3'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
+<div style='position:absolute;'><img id='img4'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
+<div style='position:absolute;'><img id='img5'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
+<div style='position:absolute;'><img id='img6'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
+<div style='position:absolute;'><img id='img7'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
+<div style='position:absolute;'><img id='img8'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
+<div style='position:absolute;'><img id='img9'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
+<div style='position:absolute;'><img id='img10' src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
+
+<br><br><br><br><br><br><br><br>
+<hr>
+DEBUG:<br>
+<img id='debugImg1' src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'>
+<img id='debugImg2' src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'>
+<img id='debugImg3' src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'>
+<img id='debugImg4' src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'>
+<img id='debugImg5' src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'>
+<img id='debugImg6' src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'>
+<img id='debugImg7' src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'>
+<img id='debugImg8' src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'>
+<img id='debugImg9' src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'>
+<img id='debugImg10' src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'>
+
+<hr>
+
+<script language="JavaScript">
+<!--
+a = a.slice(1); //skip 1st elem
+for(var i=0; i < a.length; i++) {
+	//single digit padding for better sorting
+	for(var n=1; n<=9; n++) { //Eg: |1_ to |01_
+		var pos = a[i].indexOf('|'+n+'_');
+		if(pos > 0) 
+			a[i] = a[i].substring(0,pos) +('|0'+n+'_') + a[i].substring(pos+3);
+	}
+}
+a = a.sort();
+for(var i=0; i < a.length; i++) {
+	//back to single digit
+	for(var n=1; n<=9; n++) { //Eg: |1_ to |01_
+		var pos = a[i].indexOf('|0'+n+'_');
+		if(pos > 0)
+			a[i] = a[i].substring(0,pos) +('|'+n+'_') + a[i].substring(pos+4);
+	}
+	a[i] = a[i].split('|');
+}
+
+//populate the dropdown list dynamically
+const FLDR=0, SEX=1, PNG=2; //syntatic sugar
+for(var i=0; i < a.length; i++) {
+	var theSelId = a[i][FLDR];
+	theSelId = theSelId.split('-').join(''); //if any
+	theSelId = theSelId.charAt(0).toUpperCase() + theSelId.substring(1);
+	var theSel = null;
+	
+	if(a[i][SEX] == 'male') {
+		theSel = document.getElementById('sel'+ theSelId +'M');
+		var theOpt = document.createElement("option");
+		theOpt.text = a[i][PNG].split('.png').join('');
+		theOpt.value = a[i][FLDR] +'/'+ a[i][SEX] +'/'+ a[i][PNG];
+		theSel.appendChild(theOpt);
+	}
+	else if(a[i][SEX] == 'female') {
+		theSel = document.getElementById('sel'+ theSelId +'F');
+		var theOpt = document.createElement("option");
+		theOpt.text = a[i][PNG].split('.png').join('');
+		theOpt.value = a[i][FLDR] +'/'+ a[i][SEX] +'/'+ a[i][PNG];
+		theSel.appendChild(theOpt);
+	}
+	else { //unissex
+try{	
+		theSel = document.getElementById('sel'+ theSelId +'M');
+		var theOpt = document.createElement("option");
+		theOpt.text = a[i][PNG].split('.png').join('');
+		theOpt.value = a[i][FLDR] +'/'+ a[i][SEX] +'/'+ a[i][PNG];
+		theSel.appendChild(theOpt);
+
+		theSel = document.getElementById('sel'+ theSelId +'F');
+		var theOpt = document.createElement("option");
+		theOpt.text = a[i][PNG].split('.png').join('');
+		theOpt.value = a[i][FLDR] +'/'+ a[i][SEX] +'/'+ a[i][PNG];
+		theSel.appendChild(theOpt);
+}catch(e) {alert(e)}
+	}	
+	
+}
+
+const imgpath = 'https://hihibbq.github.io/frontend/assets/images/creator/';
+
+//config the dropdown list
+selBaseM.onchange 			= function(){document.getElementById('img1').src = imgpath + this.value; document.getElementById('debugImg1').src = imgpath + this.value;};
+selBodyM.onchange 			= function(){document.getElementById('img2').src = imgpath + this.value; document.getElementById('debugImg2').src = imgpath + this.value;};
+selHairM.onchange 			= function(){document.getElementById('img3').src = imgpath + this.value; document.getElementById('debugImg3').src = imgpath + this.value;};
+selHairfrontM.onchange 		= function(){document.getElementById('img4').src = imgpath + this.value; document.getElementById('debugImg4').src = imgpath + this.value;};
+selHairbackM.onchange 		= function(){document.getElementById('img5').src = imgpath + this.value; document.getElementById('debugImg5').src = imgpath + this.value;};
+selHeadaccessoryM.onchange 	= function(){document.getElementById('img6').src = imgpath + this.value; document.getElementById('debugImg6').src = imgpath + this.value;};
+selMantleM.onchange 		= function(){document.getElementById('img7').src = imgpath + this.value; document.getElementById('debugImg7').src = imgpath + this.value;};
+selWingM.onchange 			= function(){document.getElementById('img8').src = imgpath + this.value; document.getElementById('debugImg8').src = imgpath + this.value;};
+selArmorM.onchange 			= function(){document.getElementById('img9').src = imgpath + this.value; document.getElementById('debugImg9').src = imgpath + this.value;};
+selAccessoryM.onchange 		= function(){document.getElementById('img10').src= imgpath + this.value; document.getElementById('debugImg10').src= imgpath + this.value;};
+//female
+selBaseF.onchange 			= function(){document.getElementById('img1').src = imgpath + this.value; document.getElementById('debugImg1').src = imgpath + this.value;};
+selBodyF.onchange 			= function(){document.getElementById('img2').src = imgpath + this.value; document.getElementById('debugImg2').src = imgpath + this.value;};
+selHairF.onchange 			= function(){document.getElementById('img3').src = imgpath + this.value; document.getElementById('debugImg3').src = imgpath + this.value;};
+selHairfrontF.onchange 		= function(){document.getElementById('img4').src = imgpath + this.value; document.getElementById('debugImg4').src = imgpath + this.value;};
+selHairbackF.onchange 		= function(){document.getElementById('img5').src = imgpath + this.value; document.getElementById('debugImg5').src = imgpath + this.value;};
+selHeadaccessoryF.onchange 	= function(){document.getElementById('img6').src = imgpath + this.value; document.getElementById('debugImg6').src = imgpath + this.value;};
+selMantleF.onchange 		= function(){document.getElementById('img7').src = imgpath + this.value; document.getElementById('debugImg7').src = imgpath + this.value;};
+selWingF.onchange 			= function(){document.getElementById('img8').src = imgpath + this.value; document.getElementById('debugImg8').src = imgpath + this.value;};
+selArmorF.onchange 			= function(){document.getElementById('img9').src = imgpath + this.value; document.getElementById('debugImg9').src = imgpath + this.value;};
+selAccessoryF.onchange 		= function(){document.getElementById('img10').src= imgpath + this.value; document.getElementById('debugImg10').src= imgpath + this.value;};
+
+function getToggleSex() {
+	var lckSex = document.getElementById('lckSex');
+	if(lckSex.innerText=='🔒' || lckSex.innerText=='&#x1F512;')
+		return; //locked
+
+	var selSex = document.getElementById('selSex');
+	if(selSex.options[0].selected)
+		selSex.options[1].selected = true;
+	else
+		selSex.options[0].selected = true;
+}
+
+function getRandomSex() {
+	var lckSex = document.getElementById('lckSex');
+	if(lckSex.innerText=='🔒' || lckSex.innerText=='&#x1F512;')
+		return; //locked
+
+	var selSex = document.getElementById('selSex');
+	var rnd = Math.floor(Math.random()*2) % 2;
+	selSex.options[rnd].selected = true;
+}
+
+function getRandomOption(theSel, theLck) {
+	if(theLck.innerText=='🔒' || theLck.innerText=='&#x1F512;')
+		return; //locked
+
+	var selSex = document.getElementById('selSex');
+	if(selSex.options[0].selected) { //male
+		var len = theSel.options.length;
+		var rnd = Math.floor(Math.random() * len);
+		theSel.options[rnd].selected = true;
+		theSel.onchange();
+	}
+	else { //female
+		var theSelId = theSel.id;
+		theSelId = theSelId.substring(0, theSelId.length-1) + 'F';
+		theSel = document.getElementById(theSelId);
+		var len = theSel.options.length;
+		var rnd = Math.floor(Math.random() * len);
+		theSel.options[rnd].selected = true;
+		theSel.onchange();
+	}
+	if(theSel.id.substring(0,7) =='selBase')
+		if(theSel.options[0].value == 'blank.png')
+			theSel.options[0].remove(); //force using body
+}
+
+//config the buttons
+rndBase.onclick 		 = function(){getRandomOption( selBaseM          , lckBase          )};
+rndBody.onclick 		 = function(){getRandomOption( selBodyM          , lckBody          )};
+rndHair.onclick 		 = function(){getRandomOption( selHairM          , lckHair          )};
+rndHairfront.onclick 	 = function(){getRandomOption( selHairfrontM     , lckHairfront     )};
+rndHairback.onclick 	 = function(){getRandomOption( selHairbackM      , lckHairback      )};
+rndHeadaccessory.onclick = function(){getRandomOption( selHeadaccessoryM , lckHeadaccessory )};
+rndMantle.onclick 	     = function(){getRandomOption( selMantleM        , lckMantle        )};
+rndWing.onclick 	     = function(){getRandomOption( selWingM          , lckWing          )};
+rndArmor.onclick 	     = function(){getRandomOption( selArmorM         , lckArmor         )};
+rndAccessory.onclick     = function(){getRandomOption( selAccessoryM     , lckAccessory     )};
+
+function randomAll() {
+	getRandomSex();
+	var btns = [ rndBase, rndBody, rndHair, rndHairfront, rndHairback, 
+				 rndHeadaccessory, rndMantle, rndWing, rndArmor, rndAccessory ];
+	for(var i=0; i < btns.length; i++) 
+		btns[i].click();
+}
+
+function resetAll() {
+	var nameSels = [ 'selBase', 'selBody', 'selHair', 'selHairfront', 'selHairback', 
+				     'selHeadaccessory', 'selMantle', 'selWing', 'selArmor', 'selAccessory' ];
+
+	var sels = new Array(1);
+	for(var i=0; i < nameSels.length; i++) {
+		sels.push( eval(nameSels[i]+'M') );
+		sels.push( eval(nameSels[i]+'F') );
+	}
+	sels = sels.slice(1);
+
+	for(var i=0; i < sels.length; i++) {
+		sels[i].options[0].selected = true;
+		sels[i].onchange();
+	}
+}
+
+//config the lock buttons
+lckSex.onclick           = function(){toggleLock(lckSex)};
+lckBase.onclick          = function(){toggleLock(lckBase)};
+lckBody.onclick          = function(){toggleLock(lckBody)};
+lckHair.onclick          = function(){toggleLock(lckHair)};
+lckHairfront.onclick     = function(){toggleLock(lckHairfront)};
+lckHairback.onclick      = function(){toggleLock(lckHairback)};
+lckHeadaccessory.onclick = function(){toggleLock(lckHeadaccessory)};
+lckMantle.onclick        = function(){toggleLock(lckMantle)};
+lckWing.onclick          = function(){toggleLock(lckWing)};
+lckArmor.onclick         = function(){toggleLock(lckArmor)};
+lckAccessory.onclick     = function(){toggleLock(lckAccessory)};
+
+function toggleLock(elm) {
+	if(elm.innerText=='🔓' || elm.innerText=='&#x1F513;')
+		elm.innerText = '🔒'; //lock: &#x1F512;
+	else
+		elm.innerText = '🔓'; //unlock: &#x1F513;
+}
+
+//config the checkboxes
+cbBody.onclick 		 	= function(){ toggleShowHide('img2' , cbBody 		 ); };
+cbHair.onclick 		 	= function(){ toggleShowHide('img3' , cbHair 		 ); };
+cbHairfront.onclick 	= function(){ toggleShowHide('img4' , cbHairfront 	 ); };
+cbHairback.onclick 	 	= function(){ toggleShowHide('img5' , cbHairback 	 ); };
+cbHeadaccessory.onclick = function(){ toggleShowHide('img6' , cbHeadaccessory); };
+cbMantle.onclick 	    = function(){ toggleShowHide('img7' , cbMantle 	     ); };
+cbWing.onclick 	     	= function(){ toggleShowHide('img8' , cbWing 	     ); };
+cbArmor.onclick 	    = function(){ toggleShowHide('img9' , cbArmor 	     ); };
+cbAccessory.onclick     = function(){ toggleShowHide('img10', cbAccessory    ); };
+
+function toggleShowHide(img, cb) {
+	img = document.getElementById(img);
+	if(!cb.checked)
+		img.src = 'https://hihibbq.github.io/frontend/assets/images/creator/blank.png';
+	else {
+		var sex = document.getElementById('selSex').value; // F or M
+		var elmId = 'sel'+cb.id.substring(2)+sex;
+		theSel = document.getElementById(elmId);
+		img.src = imgpath + theSel.options[theSel.selectedIndex].value;
+	}
+}
+
+
+//try render a list of parts preview/overview
+var tbl = document.createElement("tbl");
+var tr = document.createElement("tr");
+var typ0 = -1;
+var fldr0 = '';
+
+for(var i=0; i < a.length; i++) {
+	if(a[i][FLDR]!='base') {
+
+		var png = a[i][PNG].trim().split('.png').join('').split('_');
+		var typ = png[0];
+		var clr = png[1];
+		var dir = png[2];
+		var x=-32; var y=0;  //for cropping
+		var w=33;  var h=32; //for cropping
+		
+		if(clr!='black') continue;
+		
+		if(a[i][FLDR]=='wing' || (a[i][FLDR]=='mantle' && dir=='back') ) 
+			y=-3*32; //use back view
+		if(a[i][FLDR]=='hair' && typ==22) 
+			y=-32; //use side view
+
+		var td = document.createElement("td");
+
+		if(i==0) { //temp title
+			var td2 = document.createElement("td");
+			td2.innerText = a[i][FLDR];
+			tr.appendChild(td2);
+		}
+
+		//temp & dirty method
+		var spacer = document.createElement("font");
+		spacer.style = "color:white;";
+		spacer.innerText = "___."; //horz
+		spacer.appendChild(document.createElement("br")); //vert
+		spacer.appendChild(document.createElement("br")); //vert
+		td.appendChild(spacer);
+
+		//base body (hardcoded)
+		var div = document.createElement("div");
+		div.style = "position:absolute; opacity:0.5;";
+		var img = document.createElement("img");
+		if(a[i][SEX]=='male' || a[i][SEX]=='unisex')
+			img.src = "https://hihibbq.github.io/frontend/assets/images/creator/base/male/color-0.png";
+		else
+			img.src = "https://hihibbq.github.io/frontend/assets/images/creator/base/female/color-0.png";
+		img.style = "object-fit:none; object-position:"+x+"px "+y+"px; width:"+w+"px; height:"+h+"px;";
+		div.appendChild(img);
+		td.appendChild(div);
+
+		//test layer overlay
+		var div2 = document.createElement("div");
+		div2.style = "position:absolute;";
+		var img2 = document.createElement("img");
+		img2.src = imgpath + a[i][FLDR] +'/'+ a[i][SEX] +'/'+ a[i][PNG];
+		img2.style = "object-fit:none; object-position:"+x+"px "+y+"px; width:"+w+"px; height:"+h+"px;";
+		div2.appendChild(img2);
+		td.appendChild(div2);
+
+		//if(i>0 && typ!=typ0) {
+		if(i>0 && a[i][FLDR]!=a[i-1][FLDR]) {
+			tbl.appendChild(tr);
+			tr = document.createElement("tr");
+
+			var td2 = document.createElement("td");
+			td2.appendChild(document.createElement("br")); //vert
+			td2.appendChild(document.createElement("br")); //vert
+			td2.appendChild(document.createElement("br")); //vert
+			td2.innerText += '---';
+			if(a[i][FLDR]!=a[i-1][FLDR])  //temp title
+				td2.innerText += a[i][FLDR];
+			else
+				td2.innerText += '...';
+			td2.appendChild(document.createElement("br")); //vert
+			td2.appendChild(document.createElement("br")); //vert
+			td2.appendChild(document.createElement("br")); //vert
+			tr.appendChild(td2);
+		}
+		typ0 = typ;
+		tr.appendChild(td);
+	}
+}
+
+tbl.appendChild(tr);
+document.body.appendChild(tbl);
+//-->
+</script>
+
+
+</body>
+</html>
+
