@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -253,18 +254,19 @@ td {font-family: Arial;}
 
 <br>
 
-<div style='position:absolute;'><img id='img1'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
-<div style='position:absolute;'><img id='img2'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
-<div style='position:absolute;'><img id='img3'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
-<div style='position:absolute;'><img id='img4'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
-<div style='position:absolute;'><img id='img5'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
-<div style='position:absolute;'><img id='img6'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
-<div style='position:absolute;'><img id='img7'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
-<div style='position:absolute;'><img id='img8'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
-<div style='position:absolute;'><img id='img9'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
-<div style='position:absolute;'><img id='img10' src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
+<div style='position:absolute;'><img width=200% id='img1'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
+<div style='position:absolute;'><img width=200% id='img2'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
+<div style='position:absolute;'><img width=200% id='img3'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
+<div style='position:absolute;'><img width=200% id='img4'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
+<div style='position:absolute;'><img width=200% id='img5'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
+<div style='position:absolute;'><img width=200% id='img6'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
+<div style='position:absolute;'><img width=200% id='img7'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
+<div style='position:absolute;'><img width=200% id='img8'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
+<div style='position:absolute;'><img width=200% id='img9'  src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
+<div style='position:absolute;'><img width=200% id='img10' src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'></div>
 
-<br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br>
 <hr>
 DEBUG:<br>
 <img id='debugImg1' src='https://hihibbq.github.io/frontend/assets/images/creator/blank.png'>
@@ -561,17 +563,11 @@ for(var i=0; i < a.length; i++) {
 			tr = document.createElement("tr");
 
 			var td2 = document.createElement("td");
-			td2.appendChild(document.createElement("br")); //vert
-			td2.appendChild(document.createElement("br")); //vert
-			td2.appendChild(document.createElement("br")); //vert
-			td2.innerText += '---';
+			td2.style = "white-space: nowrap;";
 			if(a[i][FLDR]!=a[i-1][FLDR])  //temp title
 				td2.innerText += a[i][FLDR];
 			else
 				td2.innerText += '...';
-			td2.appendChild(document.createElement("br")); //vert
-			td2.appendChild(document.createElement("br")); //vert
-			td2.appendChild(document.createElement("br")); //vert
 			tr.appendChild(td2);
 		}
 		typ0 = typ;
