@@ -188,8 +188,14 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
 	}
 
 	//draw background
-	ctx.drawImage(bg,0,0, myCanvas.width, myCanvas.height, 0,0, myCanvas.width, myCanvas.height);
-					
+	if(bg.src.substring(bg.src.length-4) == '.png')
+ 		ctx.drawImage(bg,0,0, myCanvas.width, myCanvas.height, 0,0, myCanvas.width, myCanvas.height);
+	else { //plain color grass
+		ctx.rect(0, 0, myCanvas.width, myCanvas.height);
+		ctx.fillStyle = "#6fc8a1";
+		ctx.fill();
+	}
+		
 	for(var i=0; i < chibis.length; i++) {
 		if(!chibis[i].active || chibis[i].id < 0) continue;
 		if(listIgnoredUser.indexOf(chibis[i].label)>=0) continue;
