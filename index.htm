@@ -446,7 +446,9 @@ var rnd = Math.round(Math.random()*10000);
 if(rnd < 0) rnd = 0;
 var twChName = "hihibbq";
 if(params.ch && params.ch != "") twChName = params.ch;
-var url = "https://tmi.twitch.tv/group/user/"+ twChName +"/chatters?"+ rnd;
+//var url = "https://tmi.twitch.tv/group/user/"+ twChName +"/chatters?"+ rnd; //twitch tmi api obsoleted
+var url = "https://api.streamelements.com/kappa/v2/chatstats/"+ twChName +"/stats?"+ rnd; //3rd party api
+
 url = "https://json2jsonp.com/?url="+ encodeURIComponent(url)+"&callback=getChatters";
 fetch(url)
   .then(response => response.text())
