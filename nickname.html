@@ -47,6 +47,7 @@ function bulkSubmit(){
 			lst = lst.substring(pos+1);
 		}
 		theForm.u.value = twId;
+		theForm.n.value = '';
 		theForm.ta.value = lst;
 		theForm.btnLookup.click();
 	}
@@ -147,7 +148,7 @@ if(pos >= 0) {
   
   if(params[2][0]=='ta') {
 	var theForm = document.getElementById('frm');
-	theForm.ta.value = params[2][1].trim();
+	theForm.ta.value = decodeURIComponent(params[2][1].trim());
 	theForm.btnBulkSubmit.click();
   }
 }	
