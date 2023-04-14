@@ -59,9 +59,12 @@ function autoSubmit() {
 	if(isBulkSubmit) {
 		var theForm = document.getElementById('frm');
 		if(theForm.u.value!='' && theForm.n.value!='') {
-			if(theForm.u.value != theForm.n.value) {
-				theForm.submit();
+			if(theForm.u.value = theForm.n.value) {
+				theForm.u.value = '';
+				theForm.n.value = '';
+				theForm.btnBulkSubmit.click();
 			}
+			else theForm.submit();
 		}
 	}
 }
