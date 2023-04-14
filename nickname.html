@@ -26,6 +26,7 @@ function getTwtichNickname(json){
 
   var theForm = document.getElementById('frm');
   theForm.n.value = nick;	
+  document.getElementById("n").onchange()
   return nick;			     
 }
 	
@@ -74,7 +75,7 @@ Twitch ID:
 <input type='text' name='u' size=10>	
 <br><br>
 Nickname: 
-<input type='text' name='n' size=10 value='' onChange='JavaScript:autoSubmit();'> 
+<input type='text' name='n' id='n' size=10 value='' onChange='JavaScript:autoSubmit();'> 
 &nbsp;&nbsp;
 <input type='button' value='Lookup' name='btnLookup' onClick="JavaScript:doLookup();";>
 <br><br>
