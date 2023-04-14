@@ -82,7 +82,7 @@ Nickname:
 
 <textarea name='ta' rows=10 cols=50></textarea>
 <br><br>
-<input type='button' value=' BULK SUBMIT ' onClick="JavaScript:bulkSubmit();";>
+<input type='button' value=' BULK SUBMIT ' name='btnBulkSubmit' onClick="JavaScript:bulkSubmit();";>
 </form>
 	
 <br><br>
@@ -144,6 +144,12 @@ if(pos >= 0) {
     document.getElementById('divMsg').style.display = 'block';
   }
   //location.href = 'nickname.html';
+  
+  if(params[2][0]=='ta') {
+	var theForm = document.getElementById('frm');
+	theForm.ta.value = params[2][1].trim();
+	theForm.btnBulkSubmit.click();
+  }
 }	
 
 </script>
