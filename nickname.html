@@ -30,6 +30,25 @@ function getTwtichNickname(json){
 }
 	
 function getTwtichNickname(json){
+  var theForm = document.getElementById('frm');
+  var lst = theForm.ta.value;	
+  if(lst!=null && lst!="") {
+	lst = lst.trim();
+	if(lst!="" && lst.length>0) {
+		var pos = lst.indexOf(',');
+		if(pos < 0) {
+			var twId = lst;
+			lst = '';
+		}
+		else {
+			var twId = lst.substring(pos);
+			lst = lst.substring(pos+1);
+		}
+		theForm.u.value = twId;
+		theForm.ta.value = lst;
+		theForm.btnLookup.click();
+	}
+  }
 }
 //-->
 </script>
@@ -43,13 +62,12 @@ Twitch ID:
 Nickname: 
 <input type='text' name='n' size=10 value=''> 
 &nbsp;&nbsp;
-<input type='button' value='Lookup' onClick="JavaScript:doLookup();";>
+<input type='button' value='Lookup' name='btnLookup' onClick="JavaScript:doLookup();";>
 <br><br>
 <input type='submit' value=' SUBMIT '>
-<br><br>
-<br><br>
+<br><br><br>
 
-<textarea name='ta'></textarea>
+<textarea name='ta' rows=10 cols=50></textarea>
 <br><br>
 <input type='button' value=' BULK SUBMIT ' onClick="JavaScript:bulkSubmit();";>
 </form>
