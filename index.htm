@@ -475,20 +475,10 @@ function getChatters(json){
 	json = json.substring(0, json.lastIndexOf(')'));
 	json = JSON.parse(json);
 	
-	var ary = new Array(7);
-	ary[0] = json.chatters.broadcaster;
-	ary[1] = json.chatters.vips;
-	ary[2] = json.chatters.moderators;
-	ary[3] = json.chatters.staff;
-	ary[4] = json.chatters.admins;
-	ary[5] = json.chatters.global_mods;
-	ary[6] = json.chatters.viewers;
-
+	var ary = json.chatters;
 	var lst = "";
 	for(var i=0; i < ary.length; i++) {
-		for(var j=0; ary && j < ary[i].length; j++) {
-			lst += (','+ ary[i][j]);
-		}
+		lst += (','+ ary[i].name);
 	}
 	if(lst!="") lst = lst.substring(1);
 	return lst;  
