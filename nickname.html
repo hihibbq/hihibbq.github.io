@@ -29,7 +29,9 @@ function getTwtichNickname(json){
   return nick;			     
 }
 	
+var isBulkSubmit = false; 
 function bulkSubmit(){
+  isBulkSubmit = true;
   var theForm = document.getElementById('frm');
   var lst = theForm.ta.value;	
   if(lst!=null && lst!="") {
@@ -50,6 +52,17 @@ function bulkSubmit(){
 	}
   }
 }
+
+function autoSubmit() {
+	if(isBulkSubmit) {
+		var theForm = document.getElementById('frm');
+		if(theForm.u.value!='' && theForm.n.value!='') {
+			if(theForm.u.value != theForm.n.value) {
+				theForm.submit();
+			}
+		}
+	}
+}
 //-->
 </script>
 </head>
@@ -60,7 +73,7 @@ Twitch ID:
 <input type='text' name='u' size=10>	
 <br><br>
 Nickname: 
-<input type='text' name='n' size=10 value=''> 
+<input type='text' name='n' size=10 value='' onChange='JavaScript:autoSubmit();'> 
 &nbsp;&nbsp;
 <input type='button' value='Lookup' name='btnLookup' onClick="JavaScript:doLookup();";>
 <br><br>
