@@ -43,7 +43,7 @@ function bulkSubmit(){
 			lst = '';
 		}
 		else {
-			var twId = lst.substring(pos);
+			var twId = lst.substring(0,pos);
 			lst = lst.substring(pos+1);
 		}
 		theForm.u.value = twId;
