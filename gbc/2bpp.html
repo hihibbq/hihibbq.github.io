@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>2bpp ROM Viewer</title>
+    <style>
+        body { font-family: sans-serif; background: #222; color: #fff; padding: 20px; }
+        canvas { background: #000; border: 2px solid #555; image-rendering: pixelated; margin-top: 20px; }
+        .controls { display: flex; gap: 15px; align-items: center; }
+    </style>
+</head>
+<body>
+
+    <h1>2bpp ROM Graphic Viewer</h1>
+
+    <div class="controls">
+        <input type="file" id="fileInput" accept=".gb,.bin,.rom">
+        <label>Zoom: <input type="number" id="zoomInput" value="3" min="1" max="10" style="width: 50px;"></label>
+    </div>
+
+    <canvas id="glcanvas"></canvas>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const zoomInput = document.getElementById('zoomInput');
+        const canvas = document.getElementById('glcanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Retro Game Boy 4-color palette (00 = Lightest, 11 = Darkest)
+        const PALETTE = [, // Color 0 (White/Light green), // Color 1 (Light gray/Medium green),   // Color 2 (Dark gray/Dark green)
+            [8, 24, 32]      // Color 3 (Black/Deepest green)
+        ];
+
+        const TILE_WIDTH_PIXELS = 8;
+        const TILE_HEIGHT_PIXELS = 8;
+        const BYTES_PER_TILE = 16; // 2bpp planar: 2 bytes per row * 8 rows
+        const TILES_PER_ROW = 16;  // How many tiles to draw horizontally
+
+        let romBuffer = null;
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                romBuffer = new Uint8Array(event.target.result);
+                renderROM();
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        zoomInput.addEventListener('input', () => {
+            if (romBuffer) renderROM();
+        });
+
+        function renderROM() {
+            const zoom = parseInt(zoomInput.value) || 1;
+            const totalTiles = Math.floor(romBuffer.length / BYTES_PER_TILE);
+
+            // Calculate grid dimensions
+            const cols = TILES_PER_ROW;
+            const rows = Math.ceil(totalTiles / cols);
+
+            // Set visual canvas size matching zoom scale
+            canvas.width = cols * TILE_WIDTH_PIXELS * zoom;
+            canvas.height = rows * TILE_HEIGHT_PIXELS * zoom;
+
+            // Turn off image smoothing for crisp pixel art
+            ctx.imageSmoothingEnabled = false;
+
+            // Create an offscreen buffer to draw at a 1:1 pixel scale
+            const offscreenCanvas = document.createElement('canvas');
+            offscreenCanvas.width = cols * TILE_WIDTH_PIXELS;
+            offscreenCanvas.height = rows * TILE_HEIGHT_PIXELS;
+            const oCtx = offscreenCanvas.getContext('2d');
+
+            const imgData = oCtx.createImageData(offscreenCanvas.width, offscreenCanvas.height);
+            const data = imgData.data;
+
+            // Decode data tile by tile
+            for (let tileIdx = 0; tileIdx < totalTiles; tileIdx++) {
+                const tileByteOffset = tileIdx * BYTES_PER_TILE;
+
+                const tileX = tileIdx % cols;
+                const tileY = Math.floor(tileIdx / cols);
+
+                // Each tile has 8 vertical pixel rows
+                for (let row = 0; row < TILE_HEIGHT_PIXELS; row++) {
+                    // Game Boy 2bpp planar format interleaves bit planes by byte pairs
+                    const byte1 = romBuffer[tileByteOffset + (row * 2)];
+                    const byte2 = romBuffer[tileByteOffset + (row * 2) + 1];
+
+                    // Each row has 8 horizontal pixels
+                    for (let col = 0; col < TILE_WIDTH_PIXELS; col++) {
+                        // Bits are ordered from MSB (leftmost pixel) to LSB (rightmost pixel)
+                        const bitShift = 7 - col;
+
+                        // Combine bit from byte 1 (low bit) and byte 2 (high bit)
+                        const bit1 = (byte1 >> bitShift) & 1;
+                        const bit2 = (byte2 >> bitShift) & 1;
+                        const colorIndex = bit1 | (bit2 << 1); // Value 0, 1, 2, or 3
+
+                        const rgb = PALETTE[colorIndex];
+
+                        // Map local tile coordinates to global screen pixel coordinates
+                        const pixelX = (tileX * TILE_WIDTH_PIXELS) + col;
+                        const pixelY = (tileY * TILE_HEIGHT_PIXELS) + row;
+                        const targetDataOffset = (pixelY * offscreenCanvas.width + pixelX) * 4;
+
+                        // Inject RGB into the raw image data array
+                        data[targetDataOffset]     = rgb[0]; // Red
+                        data[targetDataOffset + 1] = rgb[1]; // Green
+                        data[targetDataOffset + 2] = rgb[2]; // Blue
+                        data[targetDataOffset + 3] = 255;    // Alpha (Opaque)
+                    }
+                }
+            }
+
+            // Draw the 1:1 image data onto the offscreen canvas, then scale up onto visible canvas
+            oCtx.putImageData(imgData, 0, 0);
+            ctx.drawImage(offscreenCanvas, 0, 0, canvas.width, canvas.height);
+        }
+    </script>
+</body>
+</html>
