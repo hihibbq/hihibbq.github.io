@@ -10,10 +10,13 @@
 <body>
     <canvas id="romCanvas" width="256" height="256"></style>
     <script>
-        // Game Boy monochrome palette (Green shades)
-        const PALETTE = [, // 00: Lightest, // 01: Light,   // 10: Dark
-            [8, 24, 32]      // 11: Darkest
-        ];
+// Game Boy monochrome palette (Green shades)
+const PALETTE = [
+    [155, 188, 15],  // 00: Lightest
+    [139, 172, 15],  // 01: Light
+    [48, 98, 48],    // 10: Dark
+    [8, 24, 32]      // 11: Darkest
+];
 
         async function loadAndRenderROM(url) {
             try {
