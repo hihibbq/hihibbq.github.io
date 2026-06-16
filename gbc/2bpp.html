@@ -9,8 +9,8 @@
 </head>
 <body>
 <form>
-<input type=text value="dbz.gb">
-<input type=button value="Extract" onclick="">
+<input type=text name="url" value="dbz.gb">
+<input type=button value="Extract" onclick="loadAndRenderROM(document.forms[0].url.value);">
 </form>
     <canvas id="romCanvas" width="256" height="256"></style>
     <script>
