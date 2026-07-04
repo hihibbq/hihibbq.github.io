@@ -2,118 +2,144 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Automated GBC Screenshot Collector</title>
+    <title>JS Game Boy Color Emulator</title>
     <style>
-        body { background: #222; color: #fff; font-family: sans-serif; text-align: center; margin-top: 40px; }
-        canvas { background: #000; border: 4px solid #444; width: 320px; height: 288px; image-rendering: pixelated; }
-        #controls { margin: 20px; }
-        button { padding: 10px 20px; font-weight: bold; cursor: pointer; }
+        body { background: #222; color: #fff; font-family: sans-serif; text-align: center; padding: 20px; }
+        #screen { border: 4px solid #444; background: #000; image-rendering: pixelated; width: 320px; height: 288px; }
+        .controls { margin-top: 15px; font-size: 14px; color: #aaa; }
+        #rom-input { margin-bottom: 20px; color: #fff; }
     </style>
-    <!-- Load the official standalone engine core -->
-    <script src="https://jsdelivr.net"></script>
 </head>
 <body>
 
-    <h1>GBC Auto-Screenshot Bot</h1>
-    <div id="controls">
-        <input type="file" id="rom-file" accept=".gb,.gbc">
-        <button id="start-btn" disabled>Start Bot</button>
+    <h1>JS Game Boy Color Emulator</h1>
+    <input type="file" id="rom-input" accept=".gb,.gbc">
+    <br>
+    <canvas id="screen" width="160" height="144"></canvas>
+
+    <div class="controls">
+        <strong>Controls:</strong> Arrow Keys = D-Pad | Z = A | X = B | Enter = Start | Shift = Select
     </div>
+
+<script>
+// --- Core Emulator State ---
+const ctx = document.getElementById('screen').getContext('2d');
+const screenImg = ctx.createImageData(160, 144);
+let romData = null;
+let isRunning = false;
+
+// Hardware components mock structures
+const cpu = { pc: 0x100, sp: 0xFFFE, a: 0, b: 0, c: 0, d: 0, e: 0, h: 0, l: 0, f: 0 };
+const memory = new Uint8Array(0x10000); 
+let joypadState = 0xFF; // Bitmask for buttons
+
+// --- ROM Loading Engine ---
+document.getElementById('rom-input').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
     
-    <canvas id="emulator-canvas" width="160" height="144"></canvas>
-
-    <script>
-        let gb = null;
-        let romBinaryString = "";
-        let animationFrameId = null;
-
-        // Keys mapping array inside GameBoyCore internals:
-        // 0: A, 1: B, 2: Select, 3: Start, 4: Right, 5: Left, 6: Up, 7: Down
-        const KEYS = [0, 1, 2, 3, 4, 5, 6, 7];
-
-        // 1. Correctly read the file data into a compatible binary string format
-        document.getElementById('rom-file').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const arrayBuffer = event.target.result;
-                const bytes = new Uint8Array(arrayBuffer);
-                let binaryStr = "";
-                
-                // Convert typical array buffer array chunks to an inner string structure
-                for (let i = 0; i < bytes.length; i++) {
-                    binaryStr += String.fromCharCode(bytes[i]);
-                }
-                
-                romBinaryString = binaryStr;
-                document.getElementById('start-btn').disabled = false;
-            };
-            reader.readAsArrayBuffer(file);
-        });
-
-        // 2. Initialize Emulator logic hooks
-        document.getElementById('start-btn').addEventListener('click', function() {
-            const canvas = document.getElementById('emulator-canvas');
-            
-            // Create Core Instantiation
-            gb = new GameBoyCore(canvas, romBinaryString);
-            
-            // Required emulator defaults initialization flags
-            gb.start(); 
-            
-            // Start processing visual game ticks loops
-            function emulationLoop() {
-                if (gb) {
-                    gb.run(); // Executes frames until drawing limit bounds reached
-                }
-                animationFrameId = requestAnimationFrame(emulationLoop);
-            }
-            animationFrameId = requestAnimationFrame(emulationLoop);
-
-            // Turn on automated systems
-            startInputBot();
-            startScreenshotCollector(canvas);
-            
-            this.disabled = true;
-        });
-
-        // 3. Game Pad Automation Loop
-        function startInputBot() {
-            setInterval(() => {
-                if (!gb) return;
-
-                const randomKey = KEYS[Math.floor(Math.random() * KEYS.length)];
-
-                // Trigger virtual inputs via core API mapping hooks
-                gb.KeyDown(randomKey);
-
-                setTimeout(() => {
-                    if (gb) gb.KeyUp(randomKey);
-                }, 100);
-
-            }, 300); // Presses a random button actions layer every 300ms
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+        const buffer = evt.target.result;
+        romData = new Uint8Array(buffer);
+        
+        // Copy ROM data into Memory spaces (Banks 0x0000 - 0x7FFF)
+        for(let i = 0; i < Math.min(romData.length, 0x8000); i++) {
+            memory[i] = romData[i];
         }
-
-        // 4. Automatic Screen Grab Exporter
-        function startScreenshotCollector(canvas) {
-            setInterval(() => {
-                if (!gb) return;
-
-                // Capture instantaneous frame data buffer state
-                const imgUrl = canvas.toDataURL('image/png');
-
-                const downloadLink = document.createElement('a');
-                downloadLink.href = imgUrl;
-                downloadLink.download = `gbc_snap_${Date.now()}.png`;
-
-                document.body.appendChild(downloadLink);
-                downloadLink.click();
-                document.body.removeChild(downloadLink);
-
-            }, 5000); // Saves image out down to file every 5 seconds
+        
+        // Handle GBC specific flag logic
+        const gbcFlag = memory[0x0143];
+        if (gbcFlag === 0x80 || gbcFlag === 0xC0) {
+            console.log("Game Boy Color ROM detected.");
         }
-    </script>
+        
+        startEmulator();
+    };
+    reader.readAsArrayBuffer(file);
+});
+
+// --- Execution Loop & CPU Timing ---
+function startEmulator() {
+    if(isRunning) return;
+    isRunning = true;
+    requestAnimationFrame(emulatorLoop);
+}
+
+function emulatorLoop() {
+    if (!isRunning) return;
+
+    // Emulate roughly 70224 clock cycles per video frame
+    let cyclesThisFrame = 0;
+    while (cyclesThisFrame < 70224) {
+        let cycles = stepCPU();
+        cyclesThisFrame += cycles;
+        stepTiming(cycles);
+    }
+
+    renderScreen();
+    requestAnimationFrame(emulatorLoop);
+}
+
+// --- Interpreter & Opcode Decoder ---
+function stepCPU() {
+    let opcode = memory[cpu.pc];
+    cpu.pc = (cpu.pc + 1) & 0xFFFF;
+
+    // Minimal instruction subset placeholder for pipeline execution loop
+    switch(opcode) {
+        case 0x00: // NOP
+            return 4;
+        case 0x10: // STOP
+            cpu.pc = (cpu.pc + 1) & 0xFFFF;
+            return 4;
+        default:
+            // Fetch next steps or default loop step cycle counts
+            return 4; 
+    }
+}
+
+function stepTiming(cycles) {
+    // Process internal memory dividers, audio channels and timer ticks
+}
+
+// --- Video Engine & Canvas Rendering ---
+function renderScreen() {
+    let pixelOffset = 0;
+    
+    // Scan line rendering conversion loops (160x144 resolution)
+    for (let y = 0; y < 144; y++) {
+        for (let x = 0; x < 160; x++) {
+            // Placeholder: Basic green shade grid fallback matrix
+            let r = 160, g = 196, b = 64; 
+            
+            screenImg.data[pixelOffset]     = r;   // Red
+            screenImg.data[pixelOffset + 1] = g;   // Green
+            screenImg.data[pixelOffset + 2] = b;   // Blue
+            screenImg.data[pixelOffset + 3] = 255; // Alpha
+            pixelOffset += 4;
+        }
+    }
+    ctx.putImageData(screenImg, 0, 0);
+}
+
+// --- Input Register Mapping ---
+const keyMap = {
+    "ArrowRight": 0, "ArrowLeft": 1, "ArrowUp": 2, "ArrowDown": 3,
+    "z": 4, "x": 5, "Shift": 6, "Enter": 7
+};
+
+window.addEventListener("keydown", (e) => {
+    if (keyMap[e.key] !== undefined) {
+        joypadState &= ~(1 << keyMap[e.key]); // Bit clear means button pressed
+    }
+});
+
+window.addEventListener("keyup", (e) => {
+    if (keyMap[e.key] !== undefined) {
+        joypadState |= (1 << keyMap[e.key]); // Bit set means button released
+    }
+});
+</script>
 </body>
 </html>
