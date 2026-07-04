@@ -1,39 +1,139 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>JSBoy 模擬器基礎架構示範</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Browser Game Boy Color Emulator</title>
     <style>
-        body { font-family: sans-serif; text-align: center; background: #222; color: #fff; }
-        #screen { background: #8bac0f; border: 4px solid #333; } /* GameBoy 經典綠色螢幕 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            letter-spacing: 1px;
+        }
+
+        #file-selector-container {
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        /* Styled file input button */
+        .upload-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.2s;
+            display: inline-block;
+        }
+
+        .upload-btn:hover {
+            background-color: #45a049;
+        }
+
+        #rom-file {
+            display: none;
+        }
+
+        /* Container hosting the EmulatorJS window */
+        #emulator-wrapper {
+            width: 640px;
+            height: 480px;
+            max-width: 90vw;
+            max-height: 70vh;
+            background-color: #000000;
+            border: 4px solid #333333;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: none; /* Hidden until a ROM is chosen */
+        }
+
+        #game-area {
+            width: 100%;
+            height: 100%;
+        }
+
+        .instructions {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #aaaaaa;
+            text-align: center;
+            max-width: 500px;
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
 
-    <h1>JSBoy 模擬器讀取示範</h1>
-    <!-- GameBoy 標準解析度為 160x144 像素 -->
-    <canvas id="screen" width="160" height="144"></canvas>
-    <br><br>
-    <input type="file" id="rom-loader" accept=".gb,.gbc">
-    <p id="status">請選擇 GameBoy 遊戲 ROM 檔案 (.gb)</p>
+    <h1>Game Boy Color Web Emulator</h1>
+
+    <!-- Step 1: Select Rom File -->
+    <div id="file-selector-container">
+        <label for="rom-file" class="upload-btn">Load GBC Game ROM</label>
+        <input type="file" id="rom-file" accept=".gb,.gbc">
+    </div>
+
+    <!-- Step 2: Emulator Container Window -->
+    <div id="emulator-wrapper">
+        <div id="game-area"></div>
+    </div>
+
+    <div class="instructions">
+        <p>Select a legal <strong>.gbc</strong> or <strong>.gb</strong> file to start. The emulator features full game window scaling, audio output, saved state management, and configuration menus directly accessible via its lower UI overlay.</p>
+    </div>
 
     <script>
-        // 1. 初始化虛擬 CPU 與記憶體 (MMU)
-        class GameBoyCPU {
-            constructor() {
-                this.pc = 0x0100; // GameBoy 程式計數器通常從 0x0100 開始執行
-                this.registers = { a: 0, b: 0, c: 0, d: 0, e: 0, h: 0, l: 0 }; // 8位元暫存器
-                this.memory = new Uint8Array(0x10000); // 64KB 記憶體空間
-            }
+        // Setup configuration environment for EmulatorJS before loading the framework engine
+        window.EJS_player = '#game-area';
+        window.EJS_core = 'gbc'; // Targets the Game Boy Color emulator core
+        
+        // Use CDN distribution paths hosting the required WebAssembly core bundles
+        window.EJS_pathtodata = 'https://emulatorjs.org'; 
 
-            loadROM(romBuffer) {
-                // 將 ROM 檔案寫入記憶體中
-                const romData = new Uint8Array(romBuffer);
-                for (let i = 0; i < romData.length; i++) {
-                    this.memory[i] = romData[i];
-                }
-                this.readCartridgeHeader();
-            }
+        const fileInput = document.getElementById('rom-file');
+        const emuWrapper = document.getElementById('emulator-wrapper');
+
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            
+            reader.onload = function(event) {
+                // Convert file content into a Uint8Array buffer
+                window.EJS_gameUrl = new Uint8Array(event.target.result);
+                
+                // Hide the loader button and expose the player view container
+                document.getElementById('file-selector-container').style.display = 'none';
+                emuWrapper.style.display = 'block';
+
+                // Dynamically inject the stable loader script to launch the compilation environment
+                const script = document.createElement('script');
+                script.src = 'https://emulatorjs.orgloader.js';
+                document.body.appendChild(script);
+            };
+
+            reader.readAsArrayBuffer(file);
+        });
+    </script>
+
+</body>
+</html>
 
             readCartridgeHeader() {
                 // 讀取卡帶標題 (GameBoy ROM 的 0x0134 - 0x0143 區間為遊戲名稱)
