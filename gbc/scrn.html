@@ -38,15 +38,14 @@ let joypadState = 0xFF; // Bitmask for buttons
 
 // --- Automatic URL ROM Loader ---
 window.addEventListener('DOMContentLoaded', () => {
-    // Target URL routed through a public CORS proxy to bypass security blocks in Chrome
+    // Clean target URL without proxy manipulation
     const targetUrl = 'https://github.io';
-    const proxyUrl = 'https://corsproxy.io?' + encodeURIComponent(targetUrl);
     
-    statusDiv.innerText = "Status: Downloading ROM from hihibbq.github.io...";
+    statusDiv.innerText = "Status: Fetching ROM directly from hihibbq.github.io...";
     
-    fetch(proxyUrl)
+    fetch(targetUrl)
         .then(response => {
-            if (!response.ok) throw new Error("Network issue or proxy error.");
+            if (!response.ok) throw new Error("Network issue or server denied request.");
             return response.arrayBuffer();
         })
         .then(buffer => {
@@ -55,11 +54,118 @@ window.addEventListener('DOMContentLoaded', () => {
         })
         .catch(err => {
             console.error(err);
-            statusDiv.innerHTML = `Status: <span style="color:red">Failed to auto-load ROM due to CORS/Network. Please upload the file manually.</span>`;
+            statusDiv.innerHTML = `Status: <span style="color:red">Failed to auto-load ROM. Ensure you are running a local server to handle network origins, or use the file picker.</span>`;
         });
 });
 
 // --- Local File ROM Loading Engine ---
+document.getElementById('rom-input').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+        processROM(evt.target.result);
+        statusDiv.innerText = `Status: Loaded ${file.name} successfully!`;
+    };
+    reader.readAsArrayBuffer(file);
+});
+
+// Common ROM Parser Function
+function processROM(buffer) {
+    romData = new Uint8Array(buffer);
+    
+    // Copy ROM data into Memory spaces (Banks 0x0000 - 0x7FFF)
+    for(let i = 0; i < Math.min(romData.length, 0x8000); i++) {
+        memory[i] = romData[i];
+    }
+    
+    // Handle GBC specific flag logic
+    const gbcFlag = memory[0x0143];
+    if (gbcFlag === 0x80 || gbcFlag === 0xC0) {
+        console.log("Game Boy Color ROM detected.");
+    }
+    
+    startEmulator();
+}
+
+// --- Execution Loop & CPU Timing ---
+function startEmulator() {
+    if(isRunning) return;
+    isRunning = true;
+    requestAnimationFrame(emulatorLoop);
+}
+
+function emulatorLoop() {
+    if (!isRunning) return;
+
+    // Emulate roughly 70224 clock cycles per video frame
+    let cyclesThisFrame = 0;
+    while (cyclesThisFrame < 70224) {
+        let cycles = stepCPU();
+        cyclesThisFrame += cycles;
+        stepTiming(cycles);
+    }
+
+    renderScreen();
+    requestAnimationFrame(emulatorLoop);
+}
+
+// --- Interpreter & Opcode Decoder ---
+function stepCPU() {
+    let opcode = memory[cpu.pc];
+    cpu.pc = (cpu.pc + 1) & 0xFFFF;
+
+    switch(opcode) {
+        case 0x00: // NOP
+            return 4;
+        case 0x10: // STOP
+            cpu.pc = (cpu.pc + 1) & 0xFFFF;
+            return 4;
+        default:
+            return 4; 
+    }
+}
+
+function stepTiming(cycles) {}
+
+// --- Video Engine & Canvas Rendering ---
+function renderScreen() {
+    let pixelOffset = 0;
+    for (let y = 0; y < 144; y++) {
+        for (let x = 0; x < 160; x++) {
+            let r = 160, g = 196, b = 64; 
+            
+            screenImg.data[pixelOffset]     = r;   
+            screenImg.data[pixelOffset + 1] = g;   
+            screenImg.data[pixelOffset + 2] = b;   
+            screenImg.data[pixelOffset + 3] = 255; 
+            pixelOffset += 4;
+        }
+    }
+    ctx.putImageData(screenImg, 0, 0);
+}
+
+// --- Input Register Mapping ---
+const keyMap = {
+    "ArrowRight": 0, "ArrowLeft": 1, "ArrowUp": 2, "ArrowDown": 3,
+    "z": 4, "x": 5, "Shift": 6, "Enter": 7
+};
+
+window.addEventListener("keydown", (e) => {
+    if (keyMap[e.key] !== undefined) {
+        joypadState &= ~(1 << keyMap[e.key]); 
+    }
+});
+
+window.addEventListener("keyup", (e) => {
+    if (keyMap[e.key] !== undefined) {
+        joypadState |= (1 << keyMap[e.key]); 
+    }
+});
+</script>
+</body>
+</html>
 document.getElementById('rom-input').addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (!file) return;
