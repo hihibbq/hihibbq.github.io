@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <title>Automated GBC Screenshot Collector</title>
     <style>
-        body { background: #222; color: #fff; font-family: sans-serif; text-align: center; }
+        body { background: #222; color: #fff; font-family: sans-serif; text-align: center; margin-top: 40px; }
         canvas { background: #000; border: 4px solid #444; width: 320px; height: 288px; image-rendering: pixelated; }
         #controls { margin: 20px; }
         button { padding: 10px 20px; font-weight: bold; cursor: pointer; }
     </style>
-    <!-- Load the lightweight GameBoy-Online Core directly  -->
-    <script src="https://hihibbq.github.io/gbc/gameboy.min.js"></script>
+    <!-- Load the official standalone engine core -->
+    <script src="https://jsdelivr.net"></script>
 </head>
 <body>
 
@@ -20,94 +20,99 @@
         <button id="start-btn" disabled>Start Bot</button>
     </div>
     
-    <!-- The core engine outputs directly to this standard HTML5 canvas -->
     <canvas id="emulator-canvas" width="160" height="144"></canvas>
 
     <script>
         let gb = null;
-        let romData = null;
-        let actionInterval = null;
-        let screenshotInterval = null;
+        let romBinaryString = "";
+        let animationFrameId = null;
 
-        // GameBoy-Online key map register values
-        const KEYS = [
-            0, // A
-            1, // B
-            2, // Select
-            3, // Start
-            4, // Right
-            5, // Left
-            6, // Up
-            7  // Down
-        ];
+        // Keys mapping array inside GameBoyCore internals:
+        // 0: A, 1: B, 2: Select, 3: Start, 4: Right, 5: Left, 6: Up, 7: Down
+        const KEYS = [0, 1, 2, 3, 4, 5, 6, 7];
 
-        // 1. Read the uploaded ROM file into a binary string
+        // 1. Correctly read the file data into a compatible binary string format
         document.getElementById('rom-file').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
 
             const reader = new FileReader();
             reader.onload = function(event) {
-                romData = event.target.result;
+                const arrayBuffer = event.target.result;
+                const bytes = new Uint8Array(arrayBuffer);
+                let binaryStr = "";
+                
+                // Convert typical array buffer array chunks to an inner string structure
+                for (let i = 0; i < bytes.length; i++) {
+                    binaryStr += String.fromCharCode(bytes[i]);
+                }
+                
+                romBinaryString = binaryStr;
                 document.getElementById('start-btn').disabled = false;
             };
-            reader.readAsBinaryString(file);
+            reader.readAsArrayBuffer(file);
         });
 
-        // 2. Initialize Emulator and Loops
+        // 2. Initialize Emulator logic hooks
         document.getElementById('start-btn').addEventListener('click', function() {
             const canvas = document.getElementById('emulator-canvas');
             
-            // Initialize GameBoyCore instance
-            // Arguments: (canvasElement, ROMBinaryString, passUnimplementedMinMaxSettings)
-            gb = new GameBoyCore(canvas, romData);
-            gb.start();
+            // Create Core Instantiation
+            gb = new GameBoyCore(canvas, romBinaryString);
+            
+            // Required emulator defaults initialization flags
+            gb.start(); 
+            
+            // Start processing visual game ticks loops
+            function emulationLoop() {
+                if (gb) {
+                    gb.run(); // Executes frames until drawing limit bounds reached
+                }
+                animationFrameId = requestAnimationFrame(emulationLoop);
+            }
+            animationFrameId = requestAnimationFrame(emulationLoop);
 
-            // Run the automated tasks
+            // Turn on automated systems
             startInputBot();
             startScreenshotCollector(canvas);
             
             this.disabled = true;
         });
 
-        // 3. Automation Loop: Random Button Presser
+        // 3. Game Pad Automation Loop
         function startInputBot() {
-            actionInterval = setInterval(() => {
+            setInterval(() => {
                 if (!gb) return;
 
-                // Pick a random GameBoy button
                 const randomKey = KEYS[Math.floor(Math.random() * KEYS.length)];
 
-                // Simulate KeyDown (Press)
+                // Trigger virtual inputs via core API mapping hooks
                 gb.KeyDown(randomKey);
 
-                // Simulate KeyUp (Release) after 80 milliseconds
                 setTimeout(() => {
-                    gb.KeyUp(randomKey);
-                }, 80);
+                    if (gb) gb.KeyUp(randomKey);
+                }, 100);
 
-            }, 200); // Press a new button every 200ms
+            }, 300); // Presses a random button actions layer every 300ms
         }
 
-        // 4. Collector Loop: Image Exporter
+        // 4. Automatic Screen Grab Exporter
         function startScreenshotCollector(canvas) {
-            screenshotInterval = setInterval(() => {
+            setInterval(() => {
                 if (!gb) return;
 
-                // Convert canvas data to a image data URL
+                // Capture instantaneous frame data buffer state
                 const imgUrl = canvas.toDataURL('image/png');
 
-                // Create a silent download anchor link
                 const downloadLink = document.createElement('a');
                 downloadLink.href = imgUrl;
                 downloadLink.download = `gbc_snap_${Date.now()}.png`;
 
-                // Trigger browser downloand
                 document.body.appendChild(downloadLink);
                 downloadLink.click();
                 document.body.removeChild(downloadLink);
 
-            }, 5000); // Take screenshot every 5000ms (5 seconds)
+            }, 5000); // Saves image out down to file every 5 seconds
         }
     </script>
 </body>
