@@ -1,95 +1,81 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>Functional JS Game Boy Color Emulator</title>
-    <!-- Production-grade Game Boy core library -->
-    <script src="https://cloudflare.com"></script>
+    <title>JSBoy 模擬器基礎架構示範</title>
     <style>
-        body { background: #222; color: #fff; font-family: sans-serif; text-align: center; padding: 20px; }
-        #canvas-container { display: inline-block; position: relative; margin: 20px auto; }
-        canvas { border: 4px solid #444; background: #000; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 320px; height: 240px; image-rendering: pixelated; }
-        .controls { margin-top: 15px; font-size: 14px; color: #aaa; background: #333; display: inline-block; padding: 10px 20px; border-radius: 8px; }
-        #status { margin-bottom: 15px; font-weight: bold; color: #0f0; font-size: 18px; }
+        body { font-family: sans-serif; text-align: center; background: #222; color: #fff; }
+        #screen { background: #8bac0f; border: 4px solid #333; } /* GameBoy 經典綠色螢幕 */
     </style>
 </head>
 <body>
 
-    <h1>JS Game Boy Color Emulator</h1>
-    <div id="status">Status: Connecting to network stream...</div>
-    
-    <div id="canvas-container">
-        <!-- High-performance rendering target canvas -->
-        <canvas id="screen" width="240" height="160"></canvas>
-    </div>
+    <h1>JSBoy 模擬器讀取示範</h1>
+    <!-- GameBoy 標準解析度為 160x144 像素 -->
+    <canvas id="screen" width="160" height="144"></canvas>
+    <br><br>
+    <input type="file" id="rom-loader" accept=".gb,.gbc">
+    <p id="status">請選擇 GameBoy 遊戲 ROM 檔案 (.gb)</p>
 
-    <br>
-    <div class="controls">
-        <strong>Controls:</strong> Arrow Keys = Movement | Z = A | X = B | Enter = Start | Shift = Select
-    </div>
-
-<script type="module">
-// Dynamically import Binjgb - a highly optimized, web-ready Game Boy Color engine matrix
-import { Binjgb } from 'https://jsdelivr.net';
-
-const canvas = document.getElementById('screen');
-const statusDiv = document.getElementById('status');
-
-// Configuration schema for mapping browser input frames straight to emulator execution loops
-const KEY_MAP = {
-    'ArrowUp': 'up', 'ArrowDown': 'down', 'ArrowLeft': 'left', 'ArrowRight': 'right',
-    'z': 'a', 'x': 'b', 'Enter': 'start', 'Shift': 'select'
-};
-
-async function bootEmulator() {
-    try {
-        const targetUrl = 'https://github.io';
-        statusDiv.innerText = "Status: Fetching Street Fighter Alpha ROM directly...";
-
-        // Stream binary file chunk arrays across the native browser network layer
-        const response = await fetch(targetUrl);
-        if (!response.ok) throw new Error(`HTTP network error! Status: ${response.status}`);
-        
-        const romBuffer = await response.arrayBuffer();
-        const romData = new Uint8Array(romBuffer);
-
-        statusDiv.innerText = "Status: Initializing GBC Hardware Core...";
-        
-        // Initialize the core system architecture instance
-        const emulator = new Binjgb({
-            canvas: canvas,
-            rom: romData,
-            onTick: () => {}
-        });
-
-        statusDiv.innerText = "Status: Game Running Successfully!";
-
-        // Hook Chrome input listeners directly into the active register matrix
-        window.addEventListener('keydown', (e) => {
-            if (KEY_MAP[e.key]) {
-                emulator.setButton(KEY_MAP[e.key], true);
-                e.preventDefault();
+    <script>
+        // 1. 初始化虛擬 CPU 與記憶體 (MMU)
+        class GameBoyCPU {
+            constructor() {
+                this.pc = 0x0100; // GameBoy 程式計數器通常從 0x0100 開始執行
+                this.registers = { a: 0, b: 0, c: 0, d: 0, e: 0, h: 0, l: 0 }; // 8位元暫存器
+                this.memory = new Uint8Array(0x10000); // 64KB 記憶體空間
             }
-        });
 
-        window.addEventListener('keyup', (e) => {
-            if (KEY_MAP[e.key]) {
-                emulator.setButton(KEY_MAP[e.key], false);
-                e.preventDefault();
+            loadROM(romBuffer) {
+                // 將 ROM 檔案寫入記憶體中
+                const romData = new Uint8Array(romBuffer);
+                for (let i = 0; i < romData.length; i++) {
+                    this.memory[i] = romData[i];
+                }
+                this.readCartridgeHeader();
             }
+
+            readCartridgeHeader() {
+                // 讀取卡帶標題 (GameBoy ROM 的 0x0134 - 0x0143 區間為遊戲名稱)
+                let title = "";
+                for (let i = 0x0134; i <= 0x0143; i++) {
+                    if (this.memory[i] === 0) break;
+                    title += String.fromCharCode(this.memory[i]);
+                }
+                document.getElementById('status').innerText = `成功載入遊戲: ${title}`;
+            }
+
+            // 模擬 CPU 執行一個指令週期 (Cycle)
+            step() {
+                let opcode = this.memory[this.pc];
+                // 實際模擬器會在這裡透過 switch-case 解析數百個 opcode (例如: 0x3E 代表 LD A, d8)
+                this.pc++; 
+            }
+        }
+
+        // 2. 初始化畫布 (Canvas)
+        const canvas = document.getElementById('screen');
+        const ctx = canvas.getContext('2d');
+
+        // 3. 實例化 JSBoy 核心
+        const jsBoy = new GameBoyCPU();
+
+        // 4. 監聽檔案上傳，讀取二進位 ROM 資料
+        document.getElementById('rom-loader').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                // 將檔案轉換為 ArrayBuffer 並餵給模擬器核心
+                jsBoy.loadROM(event.target.result);
+                
+                // 模擬繪製一個簡單的 GameBoy 像素點（實作畫面渲染）
+                ctx.fillStyle = '#0f380f'; // 最深綠色
+                ctx.fillRect(10, 10, 8, 8); // 畫一個 8x8 的經典方塊
+            };
+            reader.readAsArrayBuffer(file);
         });
-
-        // Fire execution clocks
-        emulator.start();
-
-    } catch (error) {
-        console.error("Emulator Boot Failed:", error);
-        statusDiv.innerHTML = `<span style="color:#ff4444;">Status Error: ${error.message}<br>Make sure you are serving this page from http://localhost!</span>`;
-    }
-}
-
-// Start sequence when browser window context finishes processing DOM elements
-window.addEventListener('DOMContentLoaded', bootEmulator);
-</script>
+    </script>
 </body>
 </html>
