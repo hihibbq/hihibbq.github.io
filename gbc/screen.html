@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Automated GBC Screenshot Collector</title>
+    <style>
+        body { background: #222; color: #fff; font-family: sans-serif; text-align: center; }
+        canvas { background: #000; border: 4px solid #444; width: 320px; height: 288px; image-rendering: pixelated; }
+        #controls { margin: 20px; }
+        button { padding: 10px 20px; font-weight: bold; cursor: pointer; }
+    </style>
+    <!-- Load the lightweight GameBoy-Online Core directly from CDN -->
+    <script src="https://jsdelivr.net"></script>
+</head>
+<body>
+
+    <h1>GBC Auto-Screenshot Bot</h1>
+    <div id="controls">
+        <input type="file" id="rom-file" accept=".gb,.gbc">
+        <button id="start-btn" disabled>Start Bot</button>
+    </div>
+    
+    <!-- The core engine outputs directly to this standard HTML5 canvas -->
+    <canvas id="emulator-canvas" width="160" height="144"></canvas>
+
+    <script>
+        let gb = null;
+        let romData = null;
+        let actionInterval = null;
+        let screenshotInterval = null;
+
+        // GameBoy-Online key map register values
+        const KEYS = [
+            0, // A
+            1, // B
+            2, // Select
+            3, // Start
+            4, // Right
+            5, // Left
+            6, // Up
+            7  // Down
+        ];
+
+        // 1. Read the uploaded ROM file into a binary string
+        document.getElementById('rom-file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                romData = event.target.result;
+                document.getElementById('start-btn').disabled = false;
+            };
+            reader.readAsBinaryString(file);
+        });
+
+        // 2. Initialize Emulator and Loops
+        document.getElementById('start-btn').addEventListener('click', function() {
+            const canvas = document.getElementById('emulator-canvas');
+            
+            // Initialize GameBoyCore instance
+            // Arguments: (canvasElement, ROMBinaryString, passUnimplementedMinMaxSettings)
+            gb = new GameBoyCore(canvas, romData);
+            gb.start();
+
+            // Run the automated tasks
+            startInputBot();
+            startScreenshotCollector(canvas);
+            
+            this.disabled = true;
+        });
+
+        // 3. Automation Loop: Random Button Presser
+        function startInputBot() {
+            actionInterval = setInterval(() => {
+                if (!gb) return;
+
+                // Pick a random GameBoy button
+                const randomKey = KEYS[Math.floor(Math.random() * KEYS.length)];
+
+                // Simulate KeyDown (Press)
+                gb.KeyDown(randomKey);
+
+                // Simulate KeyUp (Release) after 80 milliseconds
+                setTimeout(() => {
+                    gb.KeyUp(randomKey);
+                }, 80);
+
+            }, 200); // Press a new button every 200ms
+        }
+
+        // 4. Collector Loop: Image Exporter
+        function startScreenshotCollector(canvas) {
+            screenshotInterval = setInterval(() => {
+                if (!gb) return;
+
+                // Convert canvas data to a image data URL
+                const imgUrl = canvas.toDataURL('image/png');
+
+                // Create a silent download anchor link
+                const downloadLink = document.createElement('a');
+                downloadLink.href = imgUrl;
+                downloadLink.download = `gbc_snap_${Date.now()}.png`;
+
+                // Trigger browser downloand
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+
+            }, 5000); // Take screenshot every 5000ms (5 seconds)
+        }
+    </script>
+</body>
+</html>
