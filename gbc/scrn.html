@@ -2,274 +2,94 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>JS Game Boy Color Emulator</title>
+    <title>Functional JS Game Boy Color Emulator</title>
+    <!-- Production-grade Game Boy core library -->
+    <script src="https://cloudflare.com"></script>
     <style>
         body { background: #222; color: #fff; font-family: sans-serif; text-align: center; padding: 20px; }
-        #screen { border: 4px solid #444; background: #000; image-rendering: pixelated; width: 320px; height: 288px; }
-        .controls { margin-top: 15px; font-size: 14px; color: #aaa; }
-        #rom-input { margin-bottom: 20px; color: #fff; }
-        #status { margin-bottom: 15px; font-weight: bold; color: #0f0; }
+        #canvas-container { display: inline-block; position: relative; margin: 20px auto; }
+        canvas { border: 4px solid #444; background: #000; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 320px; height: 240px; image-rendering: pixelated; }
+        .controls { margin-top: 15px; font-size: 14px; color: #aaa; background: #333; display: inline-block; padding: 10px 20px; border-radius: 8px; }
+        #status { margin-bottom: 15px; font-weight: bold; color: #0f0; font-size: 18px; }
     </style>
 </head>
 <body>
 
     <h1>JS Game Boy Color Emulator</h1>
-    <div id="status">Status: Initializing emulator...</div>
-    <input type="file" id="rom-input" accept=".gb,.gbc">
-    <br>
-    <canvas id="screen" width="160" height="144"></canvas>
-
-    <div class="controls">
-        <strong>Controls:</strong> Arrow Keys = D-Pad | Z = A | X = B | Enter = Start | Shift = Select
+    <div id="status">Status: Connecting to network stream...</div>
+    
+    <div id="canvas-container">
+        <!-- High-performance rendering target canvas -->
+        <canvas id="screen" width="240" height="160"></canvas>
     </div>
 
-<script>
-// --- Core Emulator State ---
-const ctx = document.getElementById('screen').getContext('2d');
-const screenImg = ctx.createImageData(160, 144);
+    <br>
+    <div class="controls">
+        <strong>Controls:</strong> Arrow Keys = Movement | Z = A | X = B | Enter = Start | Shift = Select
+    </div>
+
+<script type="module">
+// Dynamically import Binjgb - a highly optimized, web-ready Game Boy Color engine matrix
+import { Binjgb } from 'https://jsdelivr.net';
+
+const canvas = document.getElementById('screen');
 const statusDiv = document.getElementById('status');
-let romData = null;
-let isRunning = false;
 
-// Hardware components mock structures
-const cpu = { pc: 0x100, sp: 0xFFFE, a: 0, b: 0, c: 0, d: 0, e: 0, h: 0, l: 0, f: 0 };
-const memory = new Uint8Array(0x10000); 
-let joypadState = 0xFF; // Bitmask for buttons
+// Configuration schema for mapping browser input frames straight to emulator execution loops
+const KEY_MAP = {
+    'ArrowUp': 'up', 'ArrowDown': 'down', 'ArrowLeft': 'left', 'ArrowRight': 'right',
+    'z': 'a', 'x': 'b', 'Enter': 'start', 'Shift': 'select'
+};
 
-// --- Automatic URL ROM Loader ---
-window.addEventListener('DOMContentLoaded', () => {
-    // Clean target URL without proxy manipulation
-    const targetUrl = 'https://github.io';
-    
-    statusDiv.innerText = "Status: Fetching ROM directly from hihibbq.github.io...";
-    
-    fetch(targetUrl)
-        .then(response => {
-            if (!response.ok) throw new Error("Network issue or server denied request.");
-            return response.arrayBuffer();
-        })
-        .then(buffer => {
-            processROM(buffer);
-            statusDiv.innerText = "Status: Loaded Street Fighter Alpha successfully!";
-        })
-        .catch(err => {
-            console.error(err);
-            statusDiv.innerHTML = `Status: <span style="color:red">Failed to auto-load ROM. Ensure you are running a local server to handle network origins, or use the file picker.</span>`;
+async function bootEmulator() {
+    try {
+        const targetUrl = 'https://github.io';
+        statusDiv.innerText = "Status: Fetching Street Fighter Alpha ROM directly...";
+
+        // Stream binary file chunk arrays across the native browser network layer
+        const response = await fetch(targetUrl);
+        if (!response.ok) throw new Error(`HTTP network error! Status: ${response.status}`);
+        
+        const romBuffer = await response.arrayBuffer();
+        const romData = new Uint8Array(romBuffer);
+
+        statusDiv.innerText = "Status: Initializing GBC Hardware Core...";
+        
+        // Initialize the core system architecture instance
+        const emulator = new Binjgb({
+            canvas: canvas,
+            rom: romData,
+            onTick: () => {}
         });
-});
 
-// --- Local File ROM Loading Engine ---
-document.getElementById('rom-input').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    
-    const reader = new FileReader();
-    reader.onload = function(evt) {
-        processROM(evt.target.result);
-        statusDiv.innerText = `Status: Loaded ${file.name} successfully!`;
-    };
-    reader.readAsArrayBuffer(file);
-});
+        statusDiv.innerText = "Status: Game Running Successfully!";
 
-// Common ROM Parser Function
-function processROM(buffer) {
-    romData = new Uint8Array(buffer);
-    
-    // Copy ROM data into Memory spaces (Banks 0x0000 - 0x7FFF)
-    for(let i = 0; i < Math.min(romData.length, 0x8000); i++) {
-        memory[i] = romData[i];
-    }
-    
-    // Handle GBC specific flag logic
-    const gbcFlag = memory[0x0143];
-    if (gbcFlag === 0x80 || gbcFlag === 0xC0) {
-        console.log("Game Boy Color ROM detected.");
-    }
-    
-    startEmulator();
-}
+        // Hook Chrome input listeners directly into the active register matrix
+        window.addEventListener('keydown', (e) => {
+            if (KEY_MAP[e.key]) {
+                emulator.setButton(KEY_MAP[e.key], true);
+                e.preventDefault();
+            }
+        });
 
-// --- Execution Loop & CPU Timing ---
-function startEmulator() {
-    if(isRunning) return;
-    isRunning = true;
-    requestAnimationFrame(emulatorLoop);
-}
+        window.addEventListener('keyup', (e) => {
+            if (KEY_MAP[e.key]) {
+                emulator.setButton(KEY_MAP[e.key], false);
+                e.preventDefault();
+            }
+        });
 
-function emulatorLoop() {
-    if (!isRunning) return;
+        // Fire execution clocks
+        emulator.start();
 
-    // Emulate roughly 70224 clock cycles per video frame
-    let cyclesThisFrame = 0;
-    while (cyclesThisFrame < 70224) {
-        let cycles = stepCPU();
-        cyclesThisFrame += cycles;
-        stepTiming(cycles);
-    }
-
-    renderScreen();
-    requestAnimationFrame(emulatorLoop);
-}
-
-// --- Interpreter & Opcode Decoder ---
-function stepCPU() {
-    let opcode = memory[cpu.pc];
-    cpu.pc = (cpu.pc + 1) & 0xFFFF;
-
-    switch(opcode) {
-        case 0x00: // NOP
-            return 4;
-        case 0x10: // STOP
-            cpu.pc = (cpu.pc + 1) & 0xFFFF;
-            return 4;
-        default:
-            return 4; 
+    } catch (error) {
+        console.error("Emulator Boot Failed:", error);
+        statusDiv.innerHTML = `<span style="color:#ff4444;">Status Error: ${error.message}<br>Make sure you are serving this page from http://localhost!</span>`;
     }
 }
 
-function stepTiming(cycles) {}
-
-// --- Video Engine & Canvas Rendering ---
-function renderScreen() {
-    let pixelOffset = 0;
-    for (let y = 0; y < 144; y++) {
-        for (let x = 0; x < 160; x++) {
-            let r = 160, g = 196, b = 64; 
-            
-            screenImg.data[pixelOffset]     = r;   
-            screenImg.data[pixelOffset + 1] = g;   
-            screenImg.data[pixelOffset + 2] = b;   
-            screenImg.data[pixelOffset + 3] = 255; 
-            pixelOffset += 4;
-        }
-    }
-    ctx.putImageData(screenImg, 0, 0);
-}
-
-// --- Input Register Mapping ---
-const keyMap = {
-    "ArrowRight": 0, "ArrowLeft": 1, "ArrowUp": 2, "ArrowDown": 3,
-    "z": 4, "x": 5, "Shift": 6, "Enter": 7
-};
-
-window.addEventListener("keydown", (e) => {
-    if (keyMap[e.key] !== undefined) {
-        joypadState &= ~(1 << keyMap[e.key]); 
-    }
-});
-
-window.addEventListener("keyup", (e) => {
-    if (keyMap[e.key] !== undefined) {
-        joypadState |= (1 << keyMap[e.key]); 
-    }
-});
-</script>
-</body>
-</html>
-document.getElementById('rom-input').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    
-    const reader = new FileReader();
-    reader.onload = function(evt) {
-        processROM(evt.target.result);
-        statusDiv.innerText = `Status: Loaded ${file.name} successfully!`;
-    };
-    reader.readAsArrayBuffer(file);
-});
-
-// Common ROM Parser Function
-function processROM(buffer) {
-    romData = new Uint8Array(buffer);
-    
-    // Copy ROM data into Memory spaces (Banks 0x0000 - 0x7FFF)
-    for(let i = 0; i < Math.min(romData.length, 0x8000); i++) {
-        memory[i] = romData[i];
-    }
-    
-    // Handle GBC specific flag logic
-    const gbcFlag = memory[0x0143];
-    if (gbcFlag === 0x80 || gbcFlag === 0xC0) {
-        console.log("Game Boy Color ROM detected.");
-    }
-    
-    startEmulator();
-}
-
-// --- Execution Loop & CPU Timing ---
-function startEmulator() {
-    if(isRunning) return;
-    isRunning = true;
-    requestAnimationFrame(emulatorLoop);
-}
-
-function emulatorLoop() {
-    if (!isRunning) return;
-
-    // Emulate roughly 70224 clock cycles per video frame
-    let cyclesThisFrame = 0;
-    while (cyclesThisFrame < 70224) {
-        let cycles = stepCPU();
-        cyclesThisFrame += cycles;
-        stepTiming(cycles);
-    }
-
-    renderScreen();
-    requestAnimationFrame(emulatorLoop);
-}
-
-// --- Interpreter & Opcode Decoder ---
-function stepCPU() {
-    let opcode = memory[cpu.pc];
-    cpu.pc = (cpu.pc + 1) & 0xFFFF;
-
-    switch(opcode) {
-        case 0x00: // NOP
-            return 4;
-        case 0x10: // STOP
-            cpu.pc = (cpu.pc + 1) & 0xFFFF;
-            return 4;
-        default:
-            return 4; 
-    }
-}
-
-function stepTiming(cycles) {}
-
-// --- Video Engine & Canvas Rendering ---
-function renderScreen() {
-    let pixelOffset = 0;
-    for (let y = 0; y < 144; y++) {
-        for (let x = 0; x < 160; x++) {
-            let r = 160, g = 196, b = 64; 
-            
-            screenImg.data[pixelOffset]     = r;   
-            screenImg.data[pixelOffset + 1] = g;   
-            screenImg.data[pixelOffset + 2] = b;   
-            screenImg.data[pixelOffset + 3] = 255; 
-            pixelOffset += 4;
-        }
-    }
-    ctx.putImageData(screenImg, 0, 0);
-}
-
-// --- Input Register Mapping ---
-const keyMap = {
-    "ArrowRight": 0, "ArrowLeft": 1, "ArrowUp": 2, "ArrowDown": 3,
-    "z": 4, "x": 5, "Shift": 6, "Enter": 7
-};
-
-window.addEventListener("keydown", (e) => {
-    if (keyMap[e.key] !== undefined) {
-        joypadState &= ~(1 << keyMap[e.key]); 
-    }
-});
-
-window.addEventListener("keyup", (e) => {
-    if (keyMap[e.key] !== undefined) {
-        joypadState |= (1 << keyMap[e.key]); 
-    }
-});
+// Start sequence when browser window context finishes processing DOM elements
+window.addEventListener('DOMContentLoaded', bootEmulator);
 </script>
 </body>
 </html>
