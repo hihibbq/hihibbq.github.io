@@ -1,392 +1,227 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-        <meta name="description" content="This is an emulator for the Gameboy(tm) and Gameboy Color(tm) that you can use inside your web browser. When you&#39;re ready to play on the go, or save your progress, we also have an Android app available." />
-        <meta property="article:modified_time" content="2026-05-24 12:42:32 -0500 CDT" />
-        <meta name="follow.it-verification-code" content="kkjTaSfl0jpHhcL3US3E"/>
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="https://emulationonline.com/index.xml">
-        <link rel="canonical" href="https://www.emulationonline.com/systems/gameboy/emulator/" />
-        <title>PicoBoy Web : Easy to use GameBoy &amp; GBC emulator in your browser. - Emulation Online</title>
-        <link rel="icon" type="image/png" href="/pico_icons/gb.32.png">
-        <link rel="stylesheet" type="text/css" href="/style.css">
-        
-            <link rel="stylesheet" type="text/css" href="/retro.css">
-        
-
-
-        
-    <script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "Article",
-            "headline": "PicoBoy Web : Easy to use GameBoy \u0026 GBC emulator in your browser.",
-            "author": { "@type": "Organization", "name": "EmulationOnline.com" },
-            "datePublished": "2025-11-10 01:45:57 -0600 CST"
-        }
-    </script>
-
-        <script defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
-        <script async src="/bs-toggle.js"></script>
-        <script>
-            let tag = document.querySelector('#plaus');
-            if (window.location.origin.indexOf('neocities.org') != -1) {
-                console.log('neocities');
-                tag.setAttribute('data-domain', 'emulationonline.neocities.org');
-            } else {
-                console.log('dotcom');
-            }
-        </script>
-    </head>
-    <body>
-        <div class="banner">
-            <a href="https://play.google.com/store/apps/details?id=com.emulationonline.piconds&utm_source=eo_b">PicoDS - DS / NDS Emulator for Android</a> is now Available!
-            
-        </div>
-        <header>
-            <strong><a href="/">Emulation Online</a></strong>
-            <nav>
-                <a href="/emulators/">Emulators</a>
-                
-                
-                <a href="/careers/">Careers</a>
-                <a href="/all-posts/">All Posts</a>
-            </nav>
-            <select id="bd-theme" aria-label="Select theme">
-                <option data-bs-theme-value="auto">auto</option>
-                <option data-bs-theme-value="light">light</option>
-                <option data-bs-theme-value="dark">dark</option>
-            </select>
-        </header>
-        <div>
-        <ul id="breadcrumbs" class="horiz">
-    
-        <li>/</li>
-        
-        <li><a href="/">Emulation Online</a></li>
-    
-        <li>/</li>
-        
-        <li><a href="/systems/">Systems</a></li>
-    
-        <li>/</li>
-        
-        <li><a href="/systems/gameboy/">Gameboy (GB &amp; GBC)</a></li>
-    
-</ul>
-
-        </div>
-
-        <main>
-            
-    
-
-
-
-    
-
-    <script>
-        const CANVAS_PARENT = "#bezel";
-        const VIDEO_DIMS = [160, 144];
-        const EMU_KEYS = [
-            ['x', 'a'],
-            ['z', 'b'],
-            ['Shift', 'select'],
-            ['Enter', 'start'],
-            ['ArrowUp', 'up'],
-            ['ArrowDown', 'down'],
-            ['ArrowLeft', 'left'],
-            ['ArrowRight', 'right'],
-        ];
-    </script>
-    <script src="/emu_loader.js"> </script>
-    <script src="/libgb.js"> </script>
-    <script>
-        window.addEventListener('load', () => {
-            document.querySelector('#scale-2x').click();
-        });
-    </script>
-    <style>
-        .start-select .button {
-            background-color: #ba69a4;
-        }
-        
-    </style>
-    <h1>PicoBoy (Web): Online GBC Emulator</h1>
-    <h4>Get the app for save support: <a href="https://play.google.com/store/apps/details?id=com.emulationonline.picoboy&utm_source=eo_sge0">Android</a></h4>
-    <div id="bezel" class="tv-bezel">
-    </div>
-
-    <br />
-    <div style="text-align: center">
-    </div>
-    <div class="controls">
-        Built in games: <select id="gamelist">
-            <option value="">-</option>
-            <option value="https://games.emulationonline.com/OrmBlok_jam.gbc">OrmBlock by BenJelter</option>
-            <option value="https://games.emulationonline.com/RunieStory.gb">RunieStory by Spicyfuse</option>
-            <option value="https://games.emulationonline.com/Deadeus.gb">Deadeus by IZMA</option>
-        </select>
-        Find more on <a href="https://itch.io/games/tag-gameboy">Itch.io</a><br />
-        Load your own: <input id="cart_picker" type="file" value="Load ROM" accept=".gb,.gbc"></input>
-        <label>Video Scale</label>
-        <button id="scale-1x">1x</button>
-        <button id="scale-2x">2x</button>
-        <button id="scale-3x">3x</button>
-    </div>
-    <div class="controller">
-        <h3>OnScreen Controls</h3>
-        <h4>(keyboard alternative in parentheses)</h4>
-
-        <div class="d-pad">
-            (arrow keys)
-            <table>
-                <tr>
-                    <td></td>
-                    <td><div class="arrow" id="up">&#9650;</div></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="arrow" id="left">&#9664;</div>
-                    </td>
-                    <td></td>
-                    <td>
-                        <div class="arrow" id="right">&#9654;</div>
-                    </td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>
-                        <div class="arrow" id="down">&#9660;</div>
-                    </td>
-                    <td></td>
-                </tr>
-            </table>
-        </div>
-        <div>
-            <br />
-            <div class="start-select">
-                <div class="button" id="b">B (Z)</div>
-                <div class="button" id="a">A (X)</div>
-            </div>
-            <div class="ab-buttons">
-                <div class="button" id="select">Select (Shift)</div>
-                <div class="button" id="start">Start (Enter)</div>
-            </div>
-        </div>
-    </div>
-    <br />
-      <div class="info">
-        <h2>Upgrade to add save support.</h2>
-        <a href="https://play.google.com/store/apps/details?id=com.emulationonline.picoboy&utm_source=eo_sne1">
-            <img
-                class="google_play_badge"
-                src="/google_play_download_badge.png"
-                alt="Download PicoBoy for Android" />
-        </a>
-        <br />
-        <a href="#upgrade">More details below</a>
-      </div>
-    <div class="info">
-        <h3>Controls:</h3>
-        <table>
-            <tr>
-                <th>GBC</th>
-                <th>Keyboard</th>
-            </tr>
-            <tr><td>Arrows</td><td>Arrow Keys</td></tr>
-            <tr><td>B</td><td>Z</td></tr>
-            <tr><td>A</td><td>X</td></tr>
-            <tr><td>Select</td><td>Shift</td></tr>
-            <tr><td>Start</td><td>Enter</td></tr>
-        </table>
-      </div>
-      <br />
-      <div class="info" style="text-align: left">
-        <h3>About PicoBoy (Web)</h3>
-        <p>PicoBoy makes it possible to play legal backups of your favorite games. Or discover a variety of new homebrew titles that have been released for the platform.
-        </p>
-
-        <h4>PicoBoy Web makes it easy to get started</h4>
-        <p>With PicoBoy Web you can play your games right in the browser, without anything to install. There are some limitations to the web version, however:
-        <ul>
-            <li>No save support</li>
-            <li>No controller support</li>
-        </ul>
-
-        <h4 id="upgrade">Get PicoBoy for Android to unlock more.</h4>
-        <p>Whether you want to take your games on the go, or want to listen to your favorite classic audio, there are options for upgrading. PicoBoy is also available for mobile, and adds:
-        <ul>
-            <li>Highly accurate sound: relisten to your favorite sounds and effects that made the console so memorable.</li>
-            <li>Controller support! On-screen touch controls are built in, but you can also plug and play with just about any controller.</li>
-            <li>Uber saves: auto saves even if your phone dies</li>
-            <li>Highly accurate (cycle-accurate) timing. Play your games just as they were on the original system.</li>
-        </ul>
-
-        Full version:
-        <br />
-        <a href="https://play.google.com/store/apps/details?id=com.emulationonline.picoboy&utm_source=eo_sne2">
-            <img
-                class="google_play_badge"
-                src="/google_play_download_badge.png"
-                alt="Download PicoBoy for Android" />
-        </a>
-        </p>
-
-      </div>
-      <div class="info" style="text-align: left">
-        <h3>Finding more games</h3>
-        <p>There are two main ways people get games. They can dump the contents of a cartridge they own, or they can look for homebrew games that are offered digitally.
-        </p>
-        <p>Dumping a cartridge rom can be quite complicated, so we'll leave that to Google. Fortunately finding homebrew roms is quite easy. On almost any site where you can find indie games, you can also find homebrew for classic systems. We happen to like <a href="https://itch.io/search?q=gameboy">itch.io</a>. If you search for "gameboy", you'll find a variety of games, some completely free or some with a free demo available.
-      </div>
-
-    </div>
-
-
-<h2 id="license">License</h2>
-<p>This project uses code from Gambatte, an open source emulator available
-under the GPLv2 License. <a href="https://github.com/EmulationOnline/gambatte-core">Full source code</a>, as well as <a href="https://github.com/EmulationOnline/gambatte-core/blob/master/COPYING">license</a>, are available on Github.</p>
-<h2 id="disclaimer">Disclaimer</h2>
-<p>PicoBoy and EmulationOnline are not affiliated with Nintendo. Gameboy™ is copyright Nintendo®.</p>
-
-
-    
-
-
-
-    
-        <hr />
-	<div id='bottom-newsletter' style="text-align: center">
-            <form action="https://assets.mailerlite.com/jsonp/2387387/forms/188738748295415445/subscribe" method="post" target="_blank">
-                <h5 data-v-bc091608="" style=" font-family: Arial; font-weight: bold;  font-size: 16px; text-align: center;">
-                    We publish about 1 post a week discussing emulation and retro systems. Join our email list to get notified when a new post is available. You can unsubscribe at any time.
-                </h5>
-                <input data-v-bc091608="" type="email" name="fields[email]" autocomplete="email" required="" placeholder="your_email@domain.com" spellcheck="false" style="text-transform: none !important; font-family: Arial; font-weight: normal; font-size: 14px; text-align: center;"></input>
-                <input data-v-bc091608="" type="submit" value="Join" style="font-family:
-                Arial; font-weight: bold; font-size: 16px; text-align:
-                center;"></input>
-	    </form>
-    </div>
-
-    <style>
-    #email-capture-slidein {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 320px;
-    background: var(--bg);
-    border: 1px solid var(--fg);
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    z-index: 1000;
-    animation: slideUp 0.4s ease-out;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minimal GameBoy Color Emulator Structure</title>
+<style>
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+background-color: #1a1a1a;
+color: #fff;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+min-height: 100vh;
+margin: 0;
 }
 
-@keyframes slideUp {
-    from { transform: translateY(100px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+.emulator-container {
+background-color: #2d2d2d;
+padding: 25px;
+border-radius: 12px;
+box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+text-align: center;
+max-width: 500px;
 }
 
-.close-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    color: #999;
+.menu-row {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 12px;
+margin-bottom: 15px;
 }
 
-#email-capture-slidein h3 {
-    margin: 0 0 8px 0;
-    font-size: 1.1rem;
-    color: #333;
+select {
+background-color: #444;
+color: #fff;
+padding: 10px;
+border: 1px solid #555;
+border-radius: 4px;
+font-size: 14px;
+cursor: pointer;
+outline: none;
 }
 
-#email-capture-slidein p {
-    font-size: 0.9rem;
-    color: #666;
-    margin-bottom: 15px;
-    line-height: 1.4;
+.divider {
+color: #888;
+font-size: 14px;
+font-style: italic;
 }
 
-#widget-form {
-    display: flex;
-    gap: 8px;
+canvas {
+background-color: #000;
+border: 6px solid #444;
+border-radius: 6px;
+image-rendering: pixelated;
+max-width: 100%;
+box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
 }
 
-#widget-form input {
-    flex: 1;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 0.9rem;
+#status-message {
+margin-bottom: 15px;
+font-size: 13px;
+color: #00ffcc;
 }
 
-#widget-form button {
-    padding: 8px 12px;
-    background: #007bff;  
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 600;
+.controls {
+margin-top: 15px;
+font-size: 14px;
+color: #aaa;
 }
 
- 
-@media (max-width: 480px) {
-    #email-capture-slidein {
-        width: calc(100% - 40px);
-        left: 20px;
-        right: 20px;
-    }
+.upload-btn {
+background-color: #4CAF50;
+color: white;
+padding: 10px 15px;
+border-radius: 4px;
+cursor: pointer;
+font-size: 14px;
+font-weight: bold;
 }
-    </style>
-    <script src="/email.js" defer></script>
-<div id="email-capture-slidein" style="display: none">
-    <button onclick="emailClose()">Close</button>
-    <div id='email-inner'>
-    </div>
 
+.upload-btn:hover {
+background-color: #45a049;
+}
+
+#rom-file {
+display: none;
+}
+
+</style>
+</head>
+<body>
+
+<div class="emulator-container">
+<h2>jsGBC Web Player</h2>
+
+<!-- Selection Dropdown and File Upload -->
+<div class="menu-row">
+<select id="rom-selector">
+<option value="" disabled selected>-- Choose a Built-in Game --</option>
+<!-- Public domain open-source GameBoy homebrew games -->
+<option value="https://githubusercontent.com">Assemboy (Tetris Clone)</option>
+<option value="https://githubusercontent.com">Tobu Tobu Girl (Homebrew Action)</option>
+<option value="https://githubusercontent.com">Glitch Boy (Homebrew Puzzle)</option>
+</select>
+
+<span class="divider">or</span>
+
+<label for="rom-file" class="upload-btn">Upload Local File</label>
+<input type="file" id="rom-file" accept=".gb,.gbc">
 </div>
 
-    
+<div id="status-message">Select a game above to boot the core...</div>
 
-        </main>
+<!-- GameBoy Screen Output -->
+<canvas id="gbc-screen" width="160" height="144"></canvas>
 
-        <br />
+<div class="controls">
+<p><strong>Controls:</strong> Arrow Keys = D-Pad | Z = A | X = B | Enter = Start | Shift = Select</p>
+</div>
+</div>
 
-        
 
+<script>
+(async () => {
+// Pull jsGBC library module from the unpkg mirror network
+const { GameBoy } = await import('https://unpkg.com');
 
+const canvas = document.getElementById('gbc-screen');
+const fileInput = document.getElementById('rom-file');
+const romSelector = document.getElementById('rom-selector');
+const statusMessage = document.getElementById('status-message');
+let gameboy = null;
 
-        <hr />
-        <div id="footer" >
-            <span>&copy; EmulationOnline</span>
-            <ul class="horiz">
-                <li>
-                    <a href="/about/">About</a>
-                </li>
-                <li>
-                    <a href="/emulators/">Emulators</a>
-                 </li>
-                 <li>
-                     <a href="/socials/">Socials</a>
-                 </li>
-                <li>
-                    <a href="/support/">Get Help</a>
-                </li>
-                <li>
-                    <a href="/all-posts/">All Posts & RSS</a>
-                </li>
-            </ul>
-        </div>
-    <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"2ad67735cf984982aaa67005d6e16923","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+// Initialize and flash the binary buffer data into the virtual engine
+function bootEmulator(romBuffer) {
+if (gameboy) {
+gameboy.stop();
+}
+
+try {
+gameboy = new GameBoy({
+lcd: { canvas: canvas }
+});
+
+gameboy.loadCartridge(new Uint8Array(romBuffer));
+gameboy.start();
+
+setupInputHandlers(gameboy);
+statusMessage.textContent = "System running smoothly!";
+statusMessage.style.color = "#00ffcc";
+} catch (err) {
+statusMessage.textContent = "Error executing ROM binary engine configuration.";
+statusMessage.style.color = "#ff4444";
+console.error(err);
+}
+}
+
+// Event handler for Web URL dropdown selector
+romSelector.addEventListener('change', async (e) => {
+const url = e.target.value;
+if (!url) return;
+
+statusMessage.textContent = "Fetching game binary data over web stream...";
+statusMessage.style.color = "#ffcc00";
+
+try {
+const response = await fetch(url);
+if (!response.ok) throw new Error("Network request failure targeting asset.");
+
+const arrayBuffer = await response.arrayBuffer();
+bootEmulator(arrayBuffer);
+} catch (error) {
+statusMessage.textContent = "CORS block or structural connection problem fetching ROM.";
+statusMessage.style.color = "#ff4444";
+console.error(error);
+}
+});
+
+// Event handler for local hard drive disk uploads
+fileInput.addEventListener('change', async (event) => {
+const file = event.target.files[0];
+if (!file) return;
+
+statusMessage.textContent = `Reading structure: ${file.name}`;
+romSelector.value = ""; // Reset dropdown view option
+
+const arrayBuffer = await file.arrayBuffer();
+bootEmulator(arrayBuffer);
+});
+
+// Structural keydown / keyup hardware pipeline mappings
+function setupInputHandlers(gbInstance) {
+const keyMap = {
+'ArrowUp': 'up',
+'ArrowDown': 'down',
+'ArrowLeft': 'left',
+'ArrowRight': 'right',
+'z': 'a',
+'x': 'b',
+'Enter': 'start',
+'Shift': 'select'
+};
+
+window.addEventListener('keydown', (e) => {
+if (keyMap[e.key]) {
+e.preventDefault();
+gbInstance.joypad.press(keyMap[e.key]);
+}
+});
+
+window.addEventListener('keyup', (e) => {
+if (keyMap[e.key]) {
+e.preventDefault();
+gbInstance.joypad.release(keyMap[e.key]);
+}
+});
+}
+})();
+
+</script>
+
 </body>
 </html>
