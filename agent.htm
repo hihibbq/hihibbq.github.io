@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>廣東話語音重複器</title>
+    <style>
+        body {
+            font-family: "Microsoft JhengHei", Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f2f5;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        button {
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-weight: bold;
+        }
+        #startBtn {
+            background-color: #28a745;
+            color: white;
+        }
+        #startBtn:hover {
+            background-color: #218838;
+        }
+        #stopBtn {
+            background-color: #dc3545;
+            color: white;
+        }
+        #stopBtn:hover {
+            background-color: #c82333;
+        }
+        button:disabled {
+            background-color: #cccccc !important;
+            cursor: not-allowed;
+        }
+        #status {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #555;
+        }
+        #transcript {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-left: 4px solid #28a745;
+            min-height: 40px;
+            text-align: left;
+            word-wrap: break-word;
+        }
+        #voice-info {
+            font-size: 12px;
+            color: #888;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>廣東話語音重複器</h2>
+    <p>點擊「開始」後請講廣東話，停頓後系統會用親切女聲全自動跟讀。</p>
+    <div class="btn-group">
+        <button id="startBtn">開始</button>
+        <button id="stopBtn" disabled>停止</button>
+    </div>
+    <div id="status">狀態：閒置</div>
+    <div id="transcript">你說的話將會顯示喺呢度...</div>
+    <div id="voice-info">載入聲音中...</div>
+</div>
+
+<script>
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const SpeechSynthesis = window.speechSynthesis;
+
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const statusDiv = document.getElementById('status');
+    const transcriptDiv = document.getElementById('transcript');
+    const voiceInfoDiv = document.getElementById('voice-info');
+
+    if (!SpeechRecognition) {
+        statusDiv.innerText = "狀態錯誤：瀏覽器不支援語音識別，請使用 Chrome 或 Edge。";
+        startBtn.disabled = true;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false; 
+    recognition.interimResults = false;
+    recognition.lang = 'zh-HK';
+
+    let shouldBeListening = false;
+    let isSpeaking = false;
+    let selectedFemaleVoice = null;
+
+    // Function to find the best local Cantonese female voice
+    function loadVoices() {
+        const voices = SpeechSynthesis.getVoices();
+        
+        // Target high-quality standard Cantonese female system profiles
+        selectedFemaleVoice = voices.find(voice => 
+            voice.lang.includes('ZH-HK') || voice.lang.includes('zh-HK') || voice.lang.includes('zh_HK')
+        );
+
+        if (selectedFemaleVoice) {
+            voiceInfoDiv.innerText = `已載入女聲：${selectedFemaleVoice.name}`;
+        } else {
+            voiceInfoDiv.innerText = "使用系統預設廣東話聲音";
+        }
+    }
+
+    // Chrome loads voices asynchronously, so we handle the event trigger
+    if (SpeechSynthesis.onvoiceschanged !== undefined) {
+        SpeechSynthesis.onvoiceschanged = loadVoices;
+    }
+    loadVoices();
+
+    // Start
+    startBtn.addEventListener('click', () => {
+        shouldBeListening = true;
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+        recognition.start();
+    });
+
+    // Stop
+    stopBtn.addEventListener('click', () => {
+        shouldBeListening = false;
+        isSpeaking = false;
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+        recognition.abort();
+        SpeechSynthesis.cancel();
+        statusDiv.innerText = "狀態：已停止";
+    });
+
+    recognition.onstart = () => {
+        statusDiv.innerText = "狀態：聽緊你講嘢... 請發言";
+    };
+
+    recognition.onresult = (event) => {
+        const textSpoken = event.results.transcript;
+        transcriptDiv.innerText = `你話："${textSpoken}"`;
+        
+        recognition.abort();
+        echoBack(textSpoken);
+    };
+
+    recognition.onend = () => {
+        if (shouldBeListening && !isSpeaking) {
+            try {
+                recognition.start();
+            } catch (e) {
+                console.log("重啟識別錯誤:", e);
+            }
+        }
+    };
+
+    recognition.onerror = (event) => {
+        if (event.error !== 'no-speech') {
+            statusDiv.innerText = `狀態錯誤 (${event.error})`;
+        }
+    };
+
+    function echoBack(text) {
+        isSpeaking = true;
+        statusDiv.innerText = "狀態：重複緊你嘅說話...";
+        SpeechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        
+        if (selectedFemaleVoice) {
+            utterance.voice = selectedFemaleVoice;
+        } else {
+            utterance.lang = 'zh-HK';
+        }
+
+        // Tweak speech rates to sound more warm, human, and natural
+        utterance.rate = 0.95; // Slightly slower than default for a friendlier rhythm
+        utterance.pitch = 1.1; // Slightly higher pitch for a warmer, clearer female tone
+
+        utterance.onend = () => {
+            isSpeaking = false;
+            statusDiv.innerText = "狀態：閒置";
+            if (shouldBeListening) {
+                try { recognition.start(); } catch(e){}
+            }
+        };
+
+        utterance.onerror = () => {
+            isSpeaking = false;
+            if (shouldBeListening) {
+                try { recognition.start(); } catch(e){}
+            }
+        };
+
+        SpeechSynthesis.speak(utterance);
+    }
+</script>
+
+</body>
+</html>
