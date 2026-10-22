@@ -21,11 +21,63 @@
         document.body.appendChild(renderer.domElement);
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-
         const gears = [];
         gears[0] = createGear(0, 0, 0);
         gears[1] = createGear(1.2, 0, 0);
         gears[2] = createGear(0.5, 0.8, 90);
+
+        const rings = [];
+        rings[0] = createRing(1.5, 0, 0);
+        rings[1] = createRing(-0.4, 0, 0);
+
+        const cage = createCage(1.5, 0, 0);
+        const pivot =  new THREE.Group();
+        pivot.position.set(0, 0, 0);
+        scene.add(pivot);
+        pivot.add(cage.rectangle);
+        pivot.add(cage.rectangle2);
+        pivot.add(cage.rectangle3);
+        pivot.add(gears[2].cylinder);
+        pivot.add(gears[2].rectangle);
+        pivot.add(gears[2].rectangle2);
+        pivot.add(gears[2].rectangle3);
+
+
+        function createCage(pos, pos2, rot) {
+            const material = new THREE.MeshNormalMaterial();
+            const rectgeom = new THREE.BoxGeometry(0.8, 0.5, 0.2);
+            const rectangle = new THREE.Mesh(rectgeom, material);
+            scene.add(rectangle);
+            const rectgeom2 = new THREE.BoxGeometry(0.8, 0.5, 0.2);
+            const rectangle2 = new THREE.Mesh(rectgeom2, material);
+            scene.add(rectangle2);
+            const rectgeom3 = new THREE.BoxGeometry(0.2, 0.5, 2.1);
+            const rectangle3 = new THREE.Mesh(rectgeom3, material);
+            scene.add(rectangle3);
+            rectangle.position.z = 1.5;
+            rectangle.position.x = 0.6;
+            rectangle2.position.z = -0.4;
+            rectangle2.position.x = 0.6;
+            rectangle3.position.z = 0.55;
+            rectangle3.position.x = 1.1;
+            rectgeom3.center(); //rotates around true middle
+            return ({ rectangle,rectangle2,rectangle3});
+        }
+
+        function createRing(pos, pos2, rot) {
+            const tubeShape = new THREE.Shape();
+            const holePath = new THREE.Path();
+            tubeShape.absarc(0, 0, 0.4, 0, Math.PI * 2, false);
+            holePath.absarc(0, 0, 0.2, 0, Math.PI * 2, true);
+            const extrudeSettings = {depth:0.2,  bevelEnabled:false, curveSegments:32};
+            tubeShape.holes.push(holePath);
+            const ringgeom = new THREE.ExtrudeGeometry(tubeShape, extrudeSettings);
+            const ringmaterial = new THREE.MeshNormalMaterial();
+            const ring = new THREE.Mesh(ringgeom, ringmaterial);
+            ringgeom.center(); //rotates around true middle
+            scene.add(ring);
+            ring.position.z = pos;
+        }
 
         function createGear(pos, pos2, rot) {
             const material = new THREE.MeshNormalMaterial();
@@ -83,6 +135,8 @@
             gear.rectangle.rotation.x += 0.01;
             gear.rectangle2.rotation.x += 0.01;
             gear.rectangle3.rotation.x += 0.01;
+            pivot.rotation.z -= 0.01;
+
             controls.update();
             renderer.render(scene, camera);
         }
